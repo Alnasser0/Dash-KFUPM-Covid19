@@ -1,0 +1,309 @@
+# -*- coding: utf-8 -*-
+
+# Run this app with `python app.py` and
+# visit http://127.0.0.1:8050/ in your web browser.
+
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import dash_bootstrap_components as dbc
+import plotly.express as px
+import pandas as pd
+import numpy as np
+from datetime import timedelta
+cnf, dth, rec, act = '#393e46', '#ff2e63', '#21bf73', '#fe9801' 
+from urllib.request import urlopen
+import json
+import re 
+import requests
+
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server # the Flask app
+
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+#DATA
+
+#Read Data
+directory = "SA_data.csv"
+df = pd.read_csv(directory, sep=None, engine='python')
+
+#Clean Daily Data
+df_clean = df.dropna(subset=["region"])
+df_Daily = df_clean.rename(columns = {"Daily / Cumulative":"Daily"})
+df_Daily = df_Daily.loc[df_Daily['Daily'] == 'Daily']
+df_Daily = df_Daily.loc[df_Daily['region'] != 'Total']
+df_Daily['Date'] = pd.to_datetime(df_Daily['Date'])
+df_Daily_regions = df_Daily.copy()
+df_Daily = df_Daily.loc[df_Daily['region'] == 'Eastern Region']
+df_Daily
+
+#Clean Cumulative Data
+df_Cumulative = df_clean.rename(columns = {"Daily / Cumulative":"Cumulative"})
+df_Cumulative = df_Cumulative.loc[df_Cumulative['Cumulative'] == 'Cumulative']
+df_Cumulative = df_Cumulative.loc[df_Cumulative['region'] != 'Total']
+df_Cumulative['Date'] = pd.to_datetime(df_Cumulative['Date'])
+df_Cumulative_regions = df_Cumulative.copy()
+df_Cumulative = df_Cumulative.loc[df_Cumulative['region'] == 'Eastern Region']
+
+#Pivot Cumulative Data
+df_Daily_regions_pivoted = df_Daily_regions.pivot_table('Cases', ['Date',	'region'], 'Indicator', fill_value=0, dropna=False, aggfunc='sum')
+
+df_Daily_pivoted = df_Daily.pivot_table('Cases', ['Date',	'City'], 'Indicator', fill_value=0, dropna=False, aggfunc='sum')
+
+df_Cumulative_regions_pivoted = df_Cumulative_regions.pivot_table('Cases', ['Date',	'region'], 'Indicator', fill_value=0, dropna=False, aggfunc='sum')
+
+df_Cumulative_pivoted = df_Cumulative.pivot_table('Cases', ['Date',	'City'], 'Indicator', fill_value=0, dropna=False, aggfunc='sum')
+
+#Process Daily and Cumulative Data
+grouped_daily = df_Daily_pivoted.groupby('Date')['Cases', 'Mortalities', 'Recoveries'].sum().reset_index()
+grouped_daily_cities = df_Daily_pivoted.groupby(['Date', 'City'])['Cases', 'Mortalities', 'Recoveries'].sum().reset_index()
+grouped_daily_regions = df_Daily_regions_pivoted.groupby(['Date', 'region'])['Cases', 'Mortalities', 'Recoveries'].sum().reset_index()
+grouped_cumulative = df_Cumulative_pivoted.groupby('Date')['Active cases', 'Cases', 'Mortalities', 'Recoveries'].sum().reset_index()
+grouped_cumulative_cities = df_Cumulative_pivoted.groupby(['Date', 'City'])['Active cases', 'Cases', 'Mortalities', 'Recoveries'].sum().reset_index()
+grouped_cumulative_regions = df_Cumulative_regions_pivoted.groupby(['Date', 'region'])['Active cases', 'Cases', 'Mortalities', 'Recoveries'].sum().reset_index()
+grouped_daily_melt = grouped_daily.melt(id_vars="Date", value_vars=['Cases', 'Mortalities', 'Recoveries'], var_name='Case', value_name='Count')
+grouped_daily_melt_cities = grouped_daily_cities.melt(id_vars=["Date", "City"], value_vars=['Cases', 'Mortalities', 'Recoveries'], var_name='Case', value_name='Count')
+grouped_daily_melt_regions = grouped_daily_regions.melt(id_vars=["Date", "region"], value_vars=['Cases', 'Mortalities', 'Recoveries'], var_name='Case', value_name='Count')
+grouped_cumulative_melt = grouped_cumulative.melt(id_vars="Date", value_vars=['Active cases', 'Mortalities', 'Recoveries'], var_name='Case', value_name='Count')
+grouped_cumulative_melt_cities = grouped_cumulative_cities.melt(id_vars=["Date", "City"], value_vars=['Active cases', 'Mortalities', 'Recoveries'], var_name='Case', value_name='Count')
+grouped_cumulative_melt_regions = grouped_cumulative_regions.melt(id_vars=["Date", "region"], value_vars=['Active cases', 'Mortalities', 'Recoveries'], var_name='Case', value_name='Count')
+grouped_daily_weekly = grouped_daily.set_index('Date').resample('W').sum().reset_index()
+grouped_daily_cities_weekly = grouped_daily_cities.set_index('Date').groupby(['City'])['Cases'].resample('W').sum().reset_index()
+grouped_daily_regions_weekly = grouped_daily_regions.set_index('Date').groupby(['region'])['Cases'].resample('W').sum().reset_index()
+grouped_cumulative_weekly = grouped_cumulative.set_index('Date').resample('W').sum().reset_index()
+
+#Check and Process Cumulative Data
+grouped_cumulative['CFR Percent'] = (100*grouped_cumulative.Mortalities)/grouped_cumulative.Cases
+grouped_cumulative['Recovary Percent'] = (100*grouped_cumulative.Recoveries)/grouped_cumulative.Cases
+
+
+grouped_cumulative_cities['CFR Percent'] = (100*grouped_cumulative_cities.Mortalities)/grouped_cumulative_cities.Cases
+grouped_cumulative_cities['Recovary Percent'] = (100*grouped_cumulative_cities.Recoveries)/grouped_cumulative_cities.Cases
+grouped_cumulative_cities = grouped_cumulative_cities.fillna(0)
+
+
+grouped_cumulative_regions['CFR Percent'] = (100*grouped_cumulative_regions.Mortalities)/grouped_cumulative_regions.Cases
+grouped_cumulative_regions['Recovary Percent'] = (100*grouped_cumulative_regions.Recoveries)/grouped_cumulative_regions.Cases
+grouped_cumulative_regions = grouped_cumulative_regions.fillna(0)
+
+#Check and Process Cumulative Data
+grouped_daily_weekly['Cumulative Cases'] = grouped_daily_weekly['Cases'].cumsum()
+grouped_daily_cities_weekly['Cumulative Cases'] = (grouped_daily_cities_weekly['Cases']).groupby(grouped_daily_cities_weekly['City']).cumsum()
+grouped_daily_regions_weekly['Cumulative Cases'] = (grouped_daily_regions_weekly['Cases']).groupby(grouped_daily_regions_weekly['region']).cumsum()
+#END OF DATA PROCESS
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+
+
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+#FIGURES
+#Name Convention: [Data type like Active, Mortalities, etc. if Daily, New, All]_[Graph Type ex Line or Bar or Scatter]_[Grouped By]_[Region: E if Eastren, else nothing]
+#Name Example: Active Cases represented in Bar Chart Grouped by City in the Eastern Region (Active_Bar_City_E)
+Active_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
+ascending=True).tail(21).sort_values('Active cases'), 
+x="Active cases", y="City", title="Current Active Cases", orientation='h')
+
+Active_Bar_E = px.bar(grouped_cumulative, x="Date", y="Active cases", title="Eastern Region Active Cases Over Time")
+Active_Bar_E.update_xaxes(rangeslider_visible=True)
+
+
+NewCases_Bar_E = px.bar(grouped_daily_cities.sort_values('Date', 
+ascending=True).tail(21).sort_values('Cases'), x="Cases", y="City", title="New Cases", orientation='h')
+
+Cases_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
+ascending=True).tail(21).sort_values('Cases'), x="Cases", y="City", title="Aggregated Confirmed Cases", orientation='h')
+
+
+NewCases_Bar_E = px.bar(grouped_daily, x="Date", y="Cases", title="Eastern Region Daily Confirmed Cases Over Time")
+NewCases_Bar_E.update_xaxes(rangeslider_visible=True)
+
+
+NewCases_LineLog_E = px.line(grouped_daily, x="Date", y="Cases", title="Eastern Region Daily Confirmed Cases Over Time (Logarithmic Scale)", log_y=True)
+NewCases_LineLog_E.update_xaxes(rangeslider_visible=True)
+
+
+NewMortalities_Bar_City_E = px.bar(grouped_daily_cities.sort_values('Date', 
+ascending=True).tail(21).sort_values('Mortalities'), x="Mortalities", y="City", title="New Deaths", orientation='h')
+
+
+Mortalities_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
+ascending=True).tail(21).sort_values('Mortalities'), x="Mortalities", y="City", title="All Deaths", orientation='h')
+
+
+NewMortalities_Bar_E = px.bar(grouped_daily, x="Date", y="Mortalities", 
+title="Eastern Region Daily Deaths Over Time", color_discrete_sequence=['#333333'])
+NewMortalities_Bar_E.update_xaxes(rangeslider_visible=True)
+
+
+Count_Bar_Cases_E = px.bar(grouped_daily_melt, x="Date", y="Count", 
+title="Eastern Region Daily Changes", color="Case", color_discrete_sequence = [act, dth, rec])
+Count_Bar_Cases_E.update_xaxes(rangeslider_visible=True)
+
+
+Count_Line_Cases_E = px.line(grouped_cumulative_melt, x="Date", y="Count", 
+title="Eastern Region Aggregated Cases - Line Plot", color="Case", color_discrete_sequence = [act, dth, rec])
+Count_Line_Cases_E.update_xaxes(rangeslider_visible=True)
+
+
+Count_BarArea_Cases_E = px.area(grouped_cumulative_melt, x="Date", y="Count", 
+title="Eastern Region Aggregated Cases - Area Plot", color="Case", color_discrete_sequence = [act, dth, rec])
+Count_BarArea_Cases_E.update_xaxes(rangeslider_visible=True)
+
+
+Mortalities_Scatter_City_E = px.scatter(grouped_cumulative_cities.sort_values('Date', ascending=True).tail(21).sort_values(['Cases', 'Mortalities']), 
+                 x='Cases', y='Mortalities', color='City', size='Cases', height=700,
+                 text='City', log_x=True, log_y=True, title='Deaths vs Confirmed (Scale is in log10)')
+Mortalities_Scatter_City_E.update_traces(textposition='top center')
+Mortalities_Scatter_City_E.update_layout(showlegend=False)
+Mortalities_Scatter_City_E.update_layout(xaxis_rangeslider_visible=True)
+
+
+RecoveryRate_Line_E = px.line(grouped_cumulative, x="Date", y="Recovary Percent", title="Recovary Ratio of Eastern Region Cases")
+RecoveryRate_Line_E.update_xaxes(rangeslider_visible=True)
+
+
+CFR_Line_E = px.line(grouped_cumulative[grouped_cumulative.Cases >= 100], x="Date", y="CFR Percent", 
+title="Cases Fetalitiy Ratio (CFR) of Eastern Region When Cases > 100")
+CFR_Line_E.update_xaxes(rangeslider_visible=True)
+
+
+CFR_Line_City_E = px.line(grouped_cumulative_cities[grouped_cumulative_cities.Cases >= 10], x="Date", y="CFR Percent", 
+title="Cases Fetalitiy Ratio (CFR) when cases >10", color='City')
+CFR_Line_City_E.update_xaxes(rangeslider_visible=True)
+
+list = []
+url = 'https://raw.githubusercontent.com/Alnasser0/COVID19/master/SAU-geo.json'
+file = requests.get(url).json()
+file['features'][0]['properties']['NAME_1'] = 'Asir'
+file['features'][2]['properties']['NAME_1'] = 'Northern Borders'
+file['features'][3]['properties']['NAME_1'] = 'Al Jouf'
+file['features'][4]['properties']['NAME_1'] = 'Medina'
+file['features'][5]['properties']['NAME_1'] = 'Qassim'
+file['features'][6]['properties']['NAME_1'] = 'Riyadh'
+file['features'][7]['properties']['NAME_1'] = 'Eastern Region'
+file['features'][8]['properties']['NAME_1'] = 'Hail'
+file['features'][9]['properties']['NAME_1'] = 'Jazan'
+file['features'][10]['properties']['NAME_1'] = 'Mecca'
+file['features'][11]['properties']['NAME_1'] = 'Najran'
+
+for k in range(len(file['features'])):
+    tuble = (file['features'][k]['properties']['NAME_1'], file['features'][k]['properties']['id'])
+    list.append(tuble)
+
+df = grouped_cumulative_regions.sort_values('Date', 
+ascending=True).tail(np.count_nonzero(grouped_cumulative_regions.region.unique())).sort_values('Active cases').reset_index()
+for i in range(len(df.index)):
+  for k in range(len(list)):
+    if(df.region.iloc[i] == list[k][0]):
+      df.loc[i, 'index'] = str(list[k][1])
+
+Active_Map_Region = px.choropleth(data_frame = df,
+                    geojson=file,
+                    locations="index",
+                    color= "Active cases",  # value that varies
+                    hover_name= "region",
+                    featureidkey='properties.id',
+                    color_continuous_scale="Viridis",  #  color scale
+                    scope='asia',
+                    title='Saudi Arabia Active Cases'
+                    )
+Active_Map_Region.update_geos(center ={'lon': 45.0792, 'lat': 23.9959},
+               lataxis_range= [15, 32], lonaxis_range=[33, 57])
+
+
+df = grouped_daily_weekly.copy()
+df['Date'] = pd.to_datetime(df['Date'])
+df['Date'] = df['Date'].dt.strftime('%m/%d/%Y')
+x_min=np.min(df['Cumulative Cases'])+1
+x_max=np.max(df['Cumulative Cases'])
+x_max+=x_max*10
+y_min=np.min(df['Cases'])+1
+y_max=np.max(df['Cases'])
+y_max+=y_max/10
+Intervention_Scatter_E = px.scatter(df, x='Cumulative Cases', y='Cases', 
+title="Successful Intervention Rate of Eastern Region", 
+size='Cumulative Cases', animation_frame='Date', log_x=True, range_x=[x_min,x_max], range_y=[y_min,y_max])
+
+
+df = grouped_daily_cities_weekly.copy()
+df['Date'] = pd.to_datetime(df['Date'])
+df['Date'] = df['Date'].dt.strftime('%m/%d/%Y')
+x_min=np.min(df['Cumulative Cases'])+1
+x_max=np.max(df['Cumulative Cases'])
+x_max+=x_max*10
+y_min=np.min(df['Cases'])+1
+y_max=np.max(df['Cases'])
+y_max+=y_max/10
+Intervention_Scatter_City_E = px.scatter(df, x='Cumulative Cases', y='Cases', 
+title="Successful Intervention Rate of Eastern Region cities", 
+log_x=True, size='Cumulative Cases', color='City', animation_frame='Date', range_x=[x_min,x_max], range_y=[y_min,y_max])
+
+
+df = grouped_daily_regions_weekly.copy()
+df['Date'] = pd.to_datetime(df['Date'])
+df['Date'] = df['Date'].dt.strftime('%m/%d/%Y')
+x_min=np.min(df['Cumulative Cases'])+1
+x_max=np.max(df['Cumulative Cases'])
+x_max+=x_max*10
+y_min=np.min(df['Cases'])+1
+y_max=np.max(df['Cases'])
+y_max+=y_max/10
+Intervention_Scatter_Region = px.scatter(df, x='Cumulative Cases', y='Cases', 
+title="Successful Intervention Rate of Saudi Arabia Regions", 
+size='Cumulative Cases', log_x=True, color='region', animation_frame='Date', range_x=[x_min,x_max], range_y=[y_min,y_max])
+
+
+#END OF FIGURES
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+###########################################################################
+app.layout = html.Div(children=[
+    html.Img(
+        src=app.get_asset_url('1200px-King_Fahd_University_of_Petroleum_&_Minerals_Logo.svg.png'),
+        style={
+            'width': 200, 
+            'height': 200,
+            'margin-left': 'auto',
+            'margin-right': 'auto',
+            "display": "block"
+        },
+        
+    ),
+    dbc.Container(
+    dbc.Alert("This is a Dashboard that is used to analyze MOH data of COVID19 in Saudi Arabia. It is maintained by KFUPM, COE Department.", color="success"),
+    className="p-5",
+    ),
+    html.Div(
+        dcc.Graph(
+        id='example-graph',
+        figure=NewCases_Bar_E
+        )
+    ),
+    html.Div(
+        dcc.Graph(
+        id='example-graph2',
+        figure=Active_Map_Region
+        )
+    )
+]
+
+)
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
