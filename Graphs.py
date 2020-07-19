@@ -101,13 +101,14 @@ CFR_Line_City_E.update_xaxes(rangeslider_visible=True)
 
 list = []
 #with - 4500ms
-
+#open - 4500ms
 # Opening JSON file 
-f = open('SAU-geo.json') 
-  
+#f = open('SAU-geo.json') 
 # returns JSON object as  
 # a dictionary 
-file = json.load(f)
+#file = json.load(f)
+url = 'https://raw.githubusercontent.com/Alnasser0/COVID19/master/SAU-geo.json'
+file = requests.get(url).json()
 
 file['features'][0]['properties']['NAME_1'] = 'Asir'
 file['features'][2]['properties']['NAME_1'] = 'Northern Borders'
