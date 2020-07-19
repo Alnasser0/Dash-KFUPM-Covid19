@@ -100,8 +100,14 @@ title="Cases Fetalitiy Ratio (CFR) when cases >10", color='City')
 CFR_Line_City_E.update_xaxes(rangeslider_visible=True)
 
 list = []
-with open("SAU-geo.json") as f:
-  file = json.load(f)
+#with - 4500ms
+
+# Opening JSON file 
+f = open('SAU-geo.json') 
+  
+# returns JSON object as  
+# a dictionary 
+file = json.load(f)
 
 file['features'][0]['properties']['NAME_1'] = 'Asir'
 file['features'][2]['properties']['NAME_1'] = 'Northern Borders'
