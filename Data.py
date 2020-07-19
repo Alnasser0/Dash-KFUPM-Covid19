@@ -72,23 +72,10 @@ grouped_daily_weekly['Cumulative Cases'] = grouped_daily_weekly['Cases'].cumsum(
 grouped_daily_cities_weekly['Cumulative Cases'] = (grouped_daily_cities_weekly['Cases']).groupby(grouped_daily_cities_weekly['City']).cumsum()
 grouped_daily_regions_weekly['Cumulative Cases'] = (grouped_daily_regions_weekly['Cases']).groupby(grouped_daily_regions_weekly['region']).cumsum()
 
-
 #JSON Data Processing
 list = []
 f = open('SAU-geo.json') 
 file = json.load(f)
-
-file['features'][0]['properties']['NAME_1'] = 'Asir'
-file['features'][2]['properties']['NAME_1'] = 'Northern Borders'
-file['features'][3]['properties']['NAME_1'] = 'Al Jouf'
-file['features'][4]['properties']['NAME_1'] = 'Medina'
-file['features'][5]['properties']['NAME_1'] = 'Qassim'
-file['features'][6]['properties']['NAME_1'] = 'Riyadh'
-file['features'][7]['properties']['NAME_1'] = 'Eastern Region'
-file['features'][8]['properties']['NAME_1'] = 'Hail'
-file['features'][9]['properties']['NAME_1'] = 'Jazan'
-file['features'][10]['properties']['NAME_1'] = 'Mecca'
-file['features'][11]['properties']['NAME_1'] = 'Najran'
 
 for k in range(len(file['features'])):
     tuble = (file['features'][k]['properties']['NAME_1'], file['features'][k]['properties']['id'])
@@ -102,6 +89,24 @@ for i in range(len(df.index)):
     if(df.region.iloc[i] == list[k][0]):
       df.loc[i, 'index'] = str(list[k][1])
 
+#Dump Data for Fast Access
+grouped_daily.to_csv('Data/grouped_daily.csv')
+grouped_daily_cities.to_csv('Data/grouped_daily_cities.csv')
+grouped_daily_regions.to_csv('Data/grouped_daily_regions.csv')
+grouped_cumulative.to_csv('Data/grouped_cumulative.csv')
+grouped_cumulative_cities.to_csv('Data/grouped_cumulative_cities.csv')
+grouped_cumulative_regions.to_csv('Data/grouped_cumulative_regions.csv')
+grouped_daily_melt.to_csv('Data/grouped_daily_melt.csv')
+grouped_daily_melt_cities.to_csv('Data/grouped_daily_melt_cities.csv')
+grouped_daily_melt_regions.to_csv('Data/grouped_daily_melt_regions.csv')
+grouped_cumulative_melt.to_csv('Data/grouped_cumulative_melt.csv')
+grouped_cumulative_melt_cities.to_csv('Data/grouped_cumulative_melt_cities.csv')
+grouped_cumulative_melt_regions.to_csv('Data/grouped_cumulative_melt_regions.csv')
+grouped_daily_weekly.to_csv('Data/grouped_daily_weekly.csv')
+grouped_daily_cities_weekly.to_csv('Data/grouped_daily_cities_weekly.csv')
+grouped_daily_regions_weekly.to_csv('Data/grouped_daily_regions_weekly.csv')
+grouped_cumulative_weekly.to_csv('Data/grouped_cumulative_weekly.csv')
+df.to_csv('Data/df.csv')
 
 
 #END OF DATA PROCESS
