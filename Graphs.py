@@ -99,43 +99,10 @@ x="Date", y="CFR Percent",
 title="Cases Fetalitiy Ratio (CFR) when cases >10", color='City')
 CFR_Line_City_E.update_xaxes(rangeslider_visible=True)
 
-list = []
-#with - 4500ms
-#open - 4500ms
-# Opening JSON file 
-#f = open('SAU-geo.json') 
-# returns JSON object as  
-# a dictionary 
-#file = json.load(f)
-url = 'https://raw.githubusercontent.com/Alnasser0/COVID19/master/SAU-geo.json'
-file = requests.get(url).json()
-
-file['features'][0]['properties']['NAME_1'] = 'Asir'
-file['features'][2]['properties']['NAME_1'] = 'Northern Borders'
-file['features'][3]['properties']['NAME_1'] = 'Al Jouf'
-file['features'][4]['properties']['NAME_1'] = 'Medina'
-file['features'][5]['properties']['NAME_1'] = 'Qassim'
-file['features'][6]['properties']['NAME_1'] = 'Riyadh'
-file['features'][7]['properties']['NAME_1'] = 'Eastern Region'
-file['features'][8]['properties']['NAME_1'] = 'Hail'
-file['features'][9]['properties']['NAME_1'] = 'Jazan'
-file['features'][10]['properties']['NAME_1'] = 'Mecca'
-file['features'][11]['properties']['NAME_1'] = 'Najran'
-
-for k in range(len(file['features'])):
-    tuble = (file['features'][k]['properties']['NAME_1'], file['features'][k]['properties']['id'])
-    list.append(tuble)
-
-df = d.grouped_cumulative_regions.sort_values('Date', 
-ascending=True).tail(np.count_nonzero(d.grouped_cumulative_regions.region.unique())
-).sort_values('Active cases').reset_index()
-for i in range(len(df.index)):
-  for k in range(len(list)):
-    if(df.region.iloc[i] == list[k][0]):
-      df.loc[i, 'index'] = str(list[k][1])
+df = d.df.copy()
 
 Active_Map_Region = px.choropleth(data_frame = df,
-                    geojson=file,
+                    geojson=d.file,
                     locations="index",
                     color= "Active cases",  # value that varies
                     hover_name= "region",
