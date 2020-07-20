@@ -6,7 +6,7 @@ In Development (contribution is appreciated):
 - Codes Optimization
 - UI improvements
 - Add sliders for Regions and Cities and embed them using call-back functions.
-- Add a table of data
+- Add a table of data - Done
 - Increase Flask App performance (trying sessions or cache maybe ?)
 - Develop a Web App for phones
 
