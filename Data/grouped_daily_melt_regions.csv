@@ -1741,6 +1741,45 @@ Date,region,Case,Count
 2020-07-15,Qassim,Cases,119
 2020-07-15,Riyadh,Cases,287
 2020-07-15,Tabuk,Cases,60
+2020-07-16,Al Bahah,Cases,48
+2020-07-16,Al Jouf,Cases,10
+2020-07-16,Asir,Cases,344
+2020-07-16,Eastern Region,Cases,772
+2020-07-16,Hail,Cases,76
+2020-07-16,Jazan,Cases,139
+2020-07-16,Mecca,Cases,554
+2020-07-16,Medina,Cases,155
+2020-07-16,Najran,Cases,49
+2020-07-16,Northern Borders,Cases,16
+2020-07-16,Qassim,Cases,137
+2020-07-16,Riyadh,Cases,289
+2020-07-16,Tabuk,Cases,24
+2020-07-17,Al Bahah,Cases,6
+2020-07-17,Al Jouf,Cases,15
+2020-07-17,Asir,Cases,385
+2020-07-17,Eastern Region,Cases,654
+2020-07-17,Hail,Cases,132
+2020-07-17,Jazan,Cases,122
+2020-07-17,Mecca,Cases,557
+2020-07-17,Medina,Cases,73
+2020-07-17,Najran,Cases,83
+2020-07-17,Northern Borders,Cases,24
+2020-07-17,Qassim,Cases,113
+2020-07-17,Riyadh,Cases,359
+2020-07-17,Tabuk,Cases,42
+2020-07-18,Al Bahah,Cases,22
+2020-07-18,Al Jouf,Cases,9
+2020-07-18,Asir,Cases,340
+2020-07-18,Eastern Region,Cases,632
+2020-07-18,Hail,Cases,69
+2020-07-18,Jazan,Cases,166
+2020-07-18,Mecca,Cases,556
+2020-07-18,Medina,Cases,113
+2020-07-18,Najran,Cases,67
+2020-07-18,Northern Borders,Cases,38
+2020-07-18,Qassim,Cases,118
+2020-07-18,Riyadh,Cases,309
+2020-07-18,Tabuk,Cases,65
 2020-03-02,Al Bahah,Mortalities,0
 2020-03-02,Al Jouf,Mortalities,0
 2020-03-02,Asir,Mortalities,0
@@ -3483,6 +3522,45 @@ Date,region,Case,Count
 2020-07-15,Qassim,Mortalities,2
 2020-07-15,Riyadh,Mortalities,14
 2020-07-15,Tabuk,Mortalities,4
+2020-07-16,Al Bahah,Mortalities,0
+2020-07-16,Al Jouf,Mortalities,0
+2020-07-16,Asir,Mortalities,1
+2020-07-16,Eastern Region,Mortalities,4
+2020-07-16,Hail,Mortalities,0
+2020-07-16,Jazan,Mortalities,0
+2020-07-16,Mecca,Mortalities,15
+2020-07-16,Medina,Mortalities,0
+2020-07-16,Najran,Mortalities,0
+2020-07-16,Northern Borders,Mortalities,0
+2020-07-16,Qassim,Mortalities,1
+2020-07-16,Riyadh,Mortalities,15
+2020-07-16,Tabuk,Mortalities,1
+2020-07-17,Al Bahah,Mortalities,0
+2020-07-17,Al Jouf,Mortalities,0
+2020-07-17,Asir,Mortalities,0
+2020-07-17,Eastern Region,Mortalities,6
+2020-07-17,Hail,Mortalities,0
+2020-07-17,Jazan,Mortalities,1
+2020-07-17,Mecca,Mortalities,15
+2020-07-17,Medina,Mortalities,0
+2020-07-17,Najran,Mortalities,0
+2020-07-17,Northern Borders,Mortalities,0
+2020-07-17,Qassim,Mortalities,0
+2020-07-17,Riyadh,Mortalities,15
+2020-07-17,Tabuk,Mortalities,3
+2020-07-18,Al Bahah,Mortalities,0
+2020-07-18,Al Jouf,Mortalities,0
+2020-07-18,Asir,Mortalities,2
+2020-07-18,Eastern Region,Mortalities,4
+2020-07-18,Hail,Mortalities,0
+2020-07-18,Jazan,Mortalities,1
+2020-07-18,Mecca,Mortalities,12
+2020-07-18,Medina,Mortalities,1
+2020-07-18,Najran,Mortalities,0
+2020-07-18,Northern Borders,Mortalities,0
+2020-07-18,Qassim,Mortalities,3
+2020-07-18,Riyadh,Mortalities,16
+2020-07-18,Tabuk,Mortalities,0
 2020-03-02,Al Bahah,Recoveries,0
 2020-03-02,Al Jouf,Recoveries,0
 2020-03-02,Asir,Recoveries,0
@@ -5225,3 +5303,42 @@ Date,region,Case,Count
 2020-07-15,Qassim,Recoveries,356
 2020-07-15,Riyadh,Recoveries,398
 2020-07-15,Tabuk,Recoveries,60
+2020-07-16,Al Bahah,Recoveries,28
+2020-07-16,Al Jouf,Recoveries,3
+2020-07-16,Asir,Recoveries,611
+2020-07-16,Eastern Region,Recoveries,809
+2020-07-16,Hail,Recoveries,126
+2020-07-16,Jazan,Recoveries,178
+2020-07-16,Mecca,Recoveries,755
+2020-07-16,Medina,Recoveries,89
+2020-07-16,Najran,Recoveries,89
+2020-07-16,Northern Borders,Recoveries,63
+2020-07-16,Qassim,Recoveries,331
+2020-07-16,Riyadh,Recoveries,393
+2020-07-16,Tabuk,Recoveries,64
+2020-07-17,Al Bahah,Recoveries,37
+2020-07-17,Al Jouf,Recoveries,11
+2020-07-17,Asir,Recoveries,400
+2020-07-17,Eastern Region,Recoveries,1220
+2020-07-17,Hail,Recoveries,201
+2020-07-17,Jazan,Recoveries,8
+2020-07-17,Mecca,Recoveries,262
+2020-07-17,Medina,Recoveries,201
+2020-07-17,Najran,Recoveries,62
+2020-07-17,Northern Borders,Recoveries,76
+2020-07-17,Qassim,Recoveries,195
+2020-07-17,Riyadh,Recoveries,325
+2020-07-17,Tabuk,Recoveries,59
+2020-07-18,Al Bahah,Recoveries,17
+2020-07-18,Al Jouf,Recoveries,22
+2020-07-18,Asir,Recoveries,358
+2020-07-18,Eastern Region,Recoveries,1596
+2020-07-18,Hail,Recoveries,181
+2020-07-18,Jazan,Recoveries,6
+2020-07-18,Mecca,Recoveries,426
+2020-07-18,Medina,Recoveries,155
+2020-07-18,Najran,Recoveries,65
+2020-07-18,Northern Borders,Recoveries,65
+2020-07-18,Qassim,Recoveries,137
+2020-07-18,Riyadh,Recoveries,441
+2020-07-18,Tabuk,Recoveries,48
