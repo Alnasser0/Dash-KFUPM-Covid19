@@ -138,6 +138,8 @@ Date,Case,Count
 2020-07-16,Active cases,18108
 2020-07-17,Active cases,17536
 2020-07-18,Active cases,16568
+2020-07-19,Active cases,15682
+2020-07-20,Active cases,14854
 2020-03-02,Mortalities,0
 2020-03-03,Mortalities,0
 2020-03-04,Mortalities,0
@@ -277,6 +279,8 @@ Date,Case,Count
 2020-07-16,Mortalities,235
 2020-07-17,Mortalities,241
 2020-07-18,Mortalities,245
+2020-07-19,Mortalities,249
+2020-07-20,Mortalities,255
 2020-03-02,Recoveries,0
 2020-03-03,Recoveries,0
 2020-03-04,Recoveries,0
@@ -416,3 +420,5 @@ Date,Case,Count
 2020-07-16,Recoveries,46016
 2020-07-17,Recoveries,47236
 2020-07-18,Recoveries,48832
+2020-07-19,Recoveries,50361
+2020-07-20,Recoveries,51767

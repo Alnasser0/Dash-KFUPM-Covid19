@@ -13,7 +13,7 @@ In Development (contribution is appreciated):
 UI Improvements:
 - Add a NavBar
 - Add the sliders to the DOC
-- Add a summary region with x by y px boxes
-- Divide the div sections of each graph into 2 graphs with good padding
-- Add a footer
+- Add a summary region with x by y px boxes - Done
+- Divide the div sections of each graph into 2 graphs with good padding - Done
+- Add a footer - Done
 - Organize stuff in the dashboard
