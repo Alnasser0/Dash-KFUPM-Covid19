@@ -16,6 +16,7 @@ df = pd.read_csv("SA_data.csv", sep=None, engine='python')
 #Clean Daily Data
 df = df.dropna(subset=["region"])
 df_Daily = df.rename(columns = {"Daily / Cumulative":"Daily"})
+df_Total = df_Daily.loc[(df_Daily['region'] == 'Total')]
 df_Daily = df_Daily.loc[(df_Daily['Daily'] == 'Daily') & (df_Daily['region'] != 'Total')]
 df_Daily['Date'] = pd.to_datetime(df_Daily['Date'])
 df_Daily_regions = df_Daily.copy()
@@ -89,6 +90,10 @@ for i in range(len(df.index)):
     if(df.region.iloc[i] == list[k][0]):
       df.loc[i, 'index'] = str(list[k][1])
 
+#Total Data Process
+df_Total['Date'] = pd.to_datetime(df_Total['Date'])
+df_Total=df_Total.loc[(df_Total['Date'] == df_Total['Date'].max())]
+
 #Dump Data for Fast Access
 grouped_daily.to_csv('Data/grouped_daily.csv', index=False )
 grouped_daily_cities.to_csv('Data/grouped_daily_cities.csv', index=False)
@@ -107,6 +112,7 @@ grouped_daily_cities_weekly.to_csv('Data/grouped_daily_cities_weekly.csv', index
 grouped_daily_regions_weekly.to_csv('Data/grouped_daily_regions_weekly.csv', index=False)
 grouped_cumulative_weekly.to_csv('Data/grouped_cumulative_weekly.csv', index=False)
 df.to_csv('Data/df.csv', index=False)
+df_Total.to_csv('Data/Total.csv', index=False)
 
 
 #END OF DATA PROCESS

@@ -11,7 +11,7 @@ In Development (contribution is appreciated):
 - Develop a Web App or PWA for phones
 
 UI Improvements:
-- Add a NavBar
+- Add a NavBar - Done
 - Add the sliders to the DOC
 - Add a summary region with x by y px boxes - Done
 - Divide the div sections of each graph into 2 graphs with good padding - Done

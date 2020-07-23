@@ -37,6 +37,16 @@ grouped_daily_cities_weekly=pd.read_csv('Data/grouped_daily_cities_weekly.csv', 
 grouped_daily_regions_weekly=pd.read_csv('Data/grouped_daily_regions_weekly.csv', engine='python')
 grouped_cumulative_weekly=pd.read_csv('Data/grouped_cumulative_weekly.csv', engine='python')
 df=pd.read_csv('Data/df.csv', engine='python')
+df_Total=pd.read_csv('Data/Total.csv', engine='python')
+
+#Daily
+Daily_Recoveries = df_Total.loc[(df_Total['Indicator'] == 'Recoveries') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
+Daily_Mortalities = df_Total.loc[(df_Total['Indicator'] == 'Mortalities') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
+Daily_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
+#Cumulative
+Cumulative_Active = df_Total.loc[(df_Total['Indicator'] == 'Active cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
+Cumulative_Critical = df_Total.loc[(df_Total['Indicator'] == 'Critical cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
+Cumulative_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
 
 count_cities=len(grouped_cumulative_cities.City.unique())
 #FIGURES
@@ -65,6 +75,9 @@ ascending=True).tail(count_cities).sort_values('Cases'), x="Cases", y="City", ti
 Cases_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
 ascending=True).tail(count_cities).sort_values('Cases'), x="Cases", y="City", 
 title="Aggregated Confirmed Cases", orientation='h')
+Cases_Bar_City_E.update_layout(
+yaxis = dict(
+tickfont = dict(size=7)))
 
 
 NewCases_Bar_E = px.bar(grouped_daily, x="Date", y="Cases", 
@@ -214,14 +227,14 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server # the Flask app
 
 #Tables
-table = dbc.Table.from_dataframe(grouped_daily_weekly, striped=True, bordered=True, hover=True)
+table = dbc.Table.from_dataframe(grouped_daily_weekly, striped=True, bordered=True, hover=True, id='Tables')
 
 #Cards
 first_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H5("Card title", className="card-title"),
-            html.P("This card has some text content, but not much else"),
+            html.H5("Today's Recoveries", className="card-title"),
+            html.P("%5d"%Daily_Recoveries),
         ]
     ),
     className="ml-3 mb-3",
@@ -232,10 +245,8 @@ first_card = dbc.Card(
 second_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H5("Second Card title", className="card-title"),
-            html.P(
-                "Second Card"
-            ),
+            html.H5("Today's Mortalities", className="card-title"),
+            html.P("%5d"%Daily_Mortalities),
         ]
     ),
     className="mb-3",
@@ -246,10 +257,8 @@ second_card = dbc.Card(
 third_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H5("Third Card title", className="card-title"),
-            html.P(
-                "tEST"
-            ),
+            html.H5("Today's Cases", className="card-title"),
+            html.P("%5d"%Daily_Cases),
         ]
     ),
     className="mb-3",
@@ -257,19 +266,57 @@ third_card = dbc.Card(
  #       'margin': 20, 
     },
 )
-cards = dbc.Row([dbc.Col(first_card, width=4), dbc.Col(second_card, width=4), dbc.Col(third_card, width=4)])
-cards2 = dbc.Row([dbc.Col(first_card, width=4), dbc.Col(second_card, width=4), dbc.Col(third_card, width=4)])
+Fourth_card = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H5("Total Active", className="card-title"),
+            html.P("%6d"%Cumulative_Active),        ]
+    ),
+    className="ml-3 mb-3",
+    style={
+ #       'margin': 20, 
+    },
+)
+Fifth_card = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H5("Critical Cases", className="card-title"),
+            html.P("%5d"%Cumulative_Critical),
+        ]
+    ),
+    className="mb-3",
+    style={
+ #       'margin': 20, 
+    },
+)
+Sixth_card = dbc.Card(
+    dbc.CardBody(
+        [
+            html.H5("All Cases", className="card-title"),
+            html.P("%7d"%Cumulative_Cases),
+        ]
+    ),
+    className="mb-3",
+    style={
+ #       'margin': 20, 
+    },
+)
+cards = dbc.Row([dbc.Col(first_card, width=4), dbc.Col(second_card, width=4), dbc.Col(third_card, width=4)], id='Summary')
+cards2 = dbc.Row([dbc.Col(Fourth_card, width=4), dbc.Col(Fifth_card, width=4), dbc.Col(Sixth_card, width=4)])
 
 #Graphs
 Graph1=html.Div(
         dcc.Graph(
-        id='example-graph',
         figure=NewCases_Bar_E
         )
     )
 Graph2=html.Div(
         dcc.Graph(
-        id='example-graph2',
+        figure=Cases_Bar_City_E
+        )
+    )
+Graph3=html.Div(
+        dcc.Graph(
         figure=Active_Map_Region
         )
     )
@@ -281,14 +328,42 @@ row = html.Div(
             [
                 dbc.Col(Graph1),
                 dbc.Col(Graph2),
-            ]
+            ],
+            id='Graphs',
         ),
     ]
+)
+row2 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph3),
+            ],
+            id='Maps',
+        ),
+    ]
+)
+
+#NavBar
+navbar = dbc.NavbarSimple(
+    children=[
+        dbc.NavItem(dbc.NavLink("Summary", href="#Summary", external_link=True)),
+        dbc.NavItem(dbc.NavLink("Charts", href="#Graphs", external_link=True)),
+        dbc.NavItem(dbc.NavLink("Maps", href="#Maps", external_link=True)),
+        dbc.NavItem(dbc.NavLink("Tables", href="#Tables", external_link=True)),
+        dbc.NavItem(dbc.NavLink("Simulation", href="#Simulation", external_link=True)),
+    ],
+    brand="KFUPM COVID19 Dashboard",
+    brand_href="#",
+    color="dark",
+    dark=True,
+   # sticky='top',
 )
 
 #Layout of DOC
 def serve_layout():
     return html.Div(children=[
+    navbar,
     html.Img(
         src=app.get_asset_url('1200px-King_Fahd_University_of_Petroleum_&_Minerals_Logo.svg.png'),
         style={
@@ -299,7 +374,6 @@ def serve_layout():
             'margin-top': 30,
             "display": "block"
         },
-        
     ),
     dbc.Container(
     dbc.Alert("This is a Dashboard that is used to analyze MOH data of COVID19 in Saudi Arabia. It is maintained by KFUPM, COE Department.", color="success"),
@@ -308,6 +382,7 @@ def serve_layout():
     cards,
     cards2,
     row,
+    row2,
     html.Div(
         table
     ),
