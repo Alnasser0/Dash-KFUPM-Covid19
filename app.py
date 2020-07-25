@@ -47,6 +47,9 @@ count_cities=len(grouped_cumulative_cities.City.unique())
 
 NewCases_Bar_E = px.bar(grouped_daily_cities.sort_values('Date', 
 ascending=True).tail(count_cities).sort_values('Cases'), x="Cases", y="City", title="New Cases", orientation='h')
+NewCases_Bar_E.update_layout(
+yaxis = dict(
+tickfont = dict(size=7)))
 
 Cases_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
 ascending=True).tail(count_cities).sort_values('Cases')[grouped_cumulative_cities.sort_values('Date', 
