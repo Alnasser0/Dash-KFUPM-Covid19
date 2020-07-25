@@ -2,148 +2,59 @@
 
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 import numpy as np
 import json
 
-#Graphs
-#######################################################
-#######################################################
-#######################################################
-cnf, dth, rec, act = '#393e46', '#ff2e63', '#21bf73', '#fe9801' 
+#Read Only Needed Data
+###########################################################################
+###########################################################################
+grouped_daily_cities=pd.read_csv('Data/grouped_daily_cities.csv')
+grouped_cumulative_cities=pd.read_csv('Data/grouped_cumulative_cities.csv')
+grouped_daily_weekly=pd.read_csv('Data/grouped_daily_weekly.csv')
+df=pd.read_csv('Data/df.csv')
+df_Total=pd.read_csv('Data/Total.csv')
 
-#Read Data
-grouped_daily=pd.read_csv('Data/grouped_daily.csv', engine='python')
-grouped_daily_cities=pd.read_csv('Data/grouped_daily_cities.csv', engine='python')
-grouped_daily_regions=pd.read_csv('Data/grouped_daily_regions.csv', engine='python')
-grouped_cumulative=pd.read_csv('Data/grouped_cumulative.csv', engine='python')
-grouped_cumulative_cities=pd.read_csv('Data/grouped_cumulative_cities.csv', engine='python')
-grouped_cumulative_regions=pd.read_csv('Data/grouped_cumulative_regions.csv', engine='python')
-grouped_daily_melt=pd.read_csv('Data/grouped_daily_melt.csv', engine='python')
-grouped_daily_melt_cities=pd.read_csv('Data/grouped_daily_melt_cities.csv', engine='python')
-grouped_daily_melt_regions=pd.read_csv('Data/grouped_daily_melt_regions.csv', engine='python')
-grouped_cumulative_melt=pd.read_csv('Data/grouped_cumulative_melt.csv', engine='python')
-grouped_cumulative_melt_cities=pd.read_csv('Data/grouped_cumulative_melt_cities.csv', engine='python')
-grouped_cumulative_melt_regions=pd.read_csv('Data/grouped_cumulative_melt_regions.csv', engine='python')
-grouped_daily_weekly=pd.read_csv('Data/grouped_daily_weekly.csv', engine='python')
-grouped_daily_cities_weekly=pd.read_csv('Data/grouped_daily_cities_weekly.csv', engine='python')
-grouped_daily_regions_weekly=pd.read_csv('Data/grouped_daily_regions_weekly.csv', engine='python')
-grouped_cumulative_weekly=pd.read_csv('Data/grouped_cumulative_weekly.csv', engine='python')
-df=pd.read_csv('Data/df.csv', engine='python')
-df_Total=pd.read_csv('Data/Total.csv', engine='python')
-
-#Daily
+#Total Summary of Last Reported Data
+###########################################################################
+###########################################################################
 Daily_Recoveries = df_Total.loc[(df_Total['Indicator'] == 'Recoveries') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
 Daily_Mortalities = df_Total.loc[(df_Total['Indicator'] == 'Mortalities') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
 Daily_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
-#Cumulative
 Cumulative_Active = df_Total.loc[(df_Total['Indicator'] == 'Active cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
 Cumulative_Critical = df_Total.loc[(df_Total['Indicator'] == 'Critical cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
 Cumulative_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
 
+#Changing variable of Eastern Regions cities since the data is not fixed.
+###########################################################################
+###########################################################################
 count_cities=len(grouped_cumulative_cities.City.unique())
-#FIGURES
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
+
+
+#FIGURES SECTION
 ###########################################################################
 ###########################################################################
 ###########################################################################
 
 #Name Convention: [Data type like Active, Mortalities, etc. if Daily:New, special:All]_[Graph Type ex Line or Bar or Scatter]_[Grouped By]_[Region: E if Eastren, else nothing]
 #Name Example: Active Cases represented in Bar Chart Grouped by City in the Eastern Region (Active_Bar_City_E)
-Active_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
-ascending=True).tail(count_cities).sort_values('Active cases'), 
-x="Active cases", y="City", title="Current Active Cases", orientation='h')
-
-Active_Bar_E = px.bar(grouped_cumulative, x="Date", y="Active cases", 
-title="Eastern Region Active Cases Over Time")
-Active_Bar_E.update_xaxes(rangeslider_visible=True)
-
+#Codes here are copied from Graphs python folder.
 
 NewCases_Bar_E = px.bar(grouped_daily_cities.sort_values('Date', 
 ascending=True).tail(count_cities).sort_values('Cases'), x="Cases", y="City", title="New Cases", orientation='h')
 
 Cases_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
-ascending=True).tail(count_cities).sort_values('Cases'), x="Cases", y="City", 
+ascending=True).tail(count_cities).sort_values('Cases')[grouped_cumulative_cities.sort_values('Date', 
+ascending=True).tail(count_cities).sort_values('Cases').Cases > 50], x="Cases", y="City", 
 title="Aggregated Confirmed Cases", orientation='h')
 Cases_Bar_City_E.update_layout(
 yaxis = dict(
 tickfont = dict(size=7)))
-
-
-NewCases_Bar_E = px.bar(grouped_daily, x="Date", y="Cases", 
-title="Eastern Region Daily Confirmed Cases Over Time")
-NewCases_Bar_E.update_xaxes(rangeslider_visible=True)
-
-
-NewCases_LineLog_E = px.line(grouped_daily, x="Date", y="Cases", 
-title="Eastern Region Daily Confirmed Cases Over Time (Logarithmic Scale)", log_y=True)
-NewCases_LineLog_E.update_xaxes(rangeslider_visible=True)
-
-
-NewMortalities_Bar_City_E = px.bar(grouped_daily_cities.sort_values('Date', 
-ascending=True).tail(count_cities).sort_values('Mortalities'), x="Mortalities", y="City", 
-title="New Deaths", orientation='h')
-
-
-Mortalities_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
-ascending=True).tail(count_cities).sort_values('Mortalities'), x="Mortalities", y="City", 
-title="All Deaths", orientation='h')
-
-
-NewMortalities_Bar_E = px.bar(grouped_daily, x="Date", y="Mortalities", 
-title="Eastern Region Daily Deaths Over Time", color_discrete_sequence=['#333333'])
-NewMortalities_Bar_E.update_xaxes(rangeslider_visible=True)
-
-
-Count_Bar_Cases_E = px.bar(grouped_daily_melt, x="Date", y="Count", 
-title="Eastern Region Daily Changes", color="Case", color_discrete_sequence = [act, dth, rec])
-Count_Bar_Cases_E.update_xaxes(rangeslider_visible=True)
-
-
-Count_Line_Cases_E = px.line(grouped_cumulative_melt, x="Date", y="Count", 
-title="Eastern Region Aggregated Cases - Line Plot", color="Case", color_discrete_sequence = [act, dth, rec])
-Count_Line_Cases_E.update_xaxes(rangeslider_visible=True)
-
-
-Count_BarArea_Cases_E = px.area(grouped_cumulative_melt, x="Date", y="Count", 
-title="Eastern Region Aggregated Cases - Area Plot", color="Case", color_discrete_sequence = [act, dth, rec])
-Count_BarArea_Cases_E.update_xaxes(rangeslider_visible=True)
-
-
-Mortalities_Scatter_City_E = px.scatter(grouped_cumulative_cities.sort_values('Date', 
-                ascending=True).tail(count_cities).sort_values(['Cases', 'Mortalities']), 
-                 x='Cases', y='Mortalities', color='City', size='Cases', height=700,
-                 text='City', log_x=True, log_y=True, title='Deaths vs Confirmed (Scale is in log10)')
-Mortalities_Scatter_City_E.update_traces(textposition='top center')
-Mortalities_Scatter_City_E.update_layout(showlegend=False)
-Mortalities_Scatter_City_E.update_layout(xaxis_rangeslider_visible=True)
-
-
-RecoveryRate_Line_E = px.line(grouped_cumulative, x="Date", y="Recovary Percent", 
-title="Recovary Ratio of Eastern Region Cases")
-RecoveryRate_Line_E.update_xaxes(rangeslider_visible=True)
-
-
-CFR_Line_E = px.line(grouped_cumulative[grouped_cumulative.Cases >= 100], x="Date", y="CFR Percent", 
-title="Cases Fetalitiy Ratio (CFR) of Eastern Region When Cases > 100")
-CFR_Line_E.update_xaxes(rangeslider_visible=True)
-
-
-CFR_Line_City_E = px.line(grouped_cumulative_cities[grouped_cumulative_cities.Cases >= 10], 
-x="Date", y="CFR Percent", 
-title="Cases Fetalitiy Ratio (CFR) when cases >10", color='City')
-CFR_Line_City_E.update_xaxes(rangeslider_visible=True)
-
 
 f = open('SAU-geo.json') 
 file = json.load(f)
@@ -162,78 +73,30 @@ Active_Map_Region.update_geos(center ={'lon': 45.0792, 'lat': 23.9959},
                lataxis_range= [15, 32], lonaxis_range=[33, 57])
 
 
-df = grouped_daily_weekly.copy()
-df['Date'] = pd.to_datetime(df['Date'])
-df['Date'] = df['Date'].dt.strftime('%m/%d/%Y')
-x_min=np.min(df['Cumulative Cases'])+1
-x_max=np.max(df['Cumulative Cases'])
-x_max+=x_max*10
-y_min=np.min(df['Cases'])+1
-y_max=np.max(df['Cases'])
-y_max+=y_max/10
-Intervention_Scatter_E = px.scatter(df, x='Cumulative Cases', y='Cases', 
-title="Successful Intervention Rate of Eastern Region", 
-size='Cumulative Cases', animation_frame='Date', log_x=True, range_x=[x_min,x_max], 
-range_y=[y_min,y_max])
-
-
-df = grouped_daily_cities_weekly.copy()
-df['Date'] = pd.to_datetime(df['Date'])
-df['Date'] = df['Date'].dt.strftime('%m/%d/%Y')
-x_min=np.min(df['Cumulative Cases'])+1
-x_max=np.max(df['Cumulative Cases'])
-x_max+=x_max*10
-y_min=np.min(df['Cases'])+1
-y_max=np.max(df['Cases'])
-y_max+=y_max/10
-Intervention_Scatter_City_E = px.scatter(df, x='Cumulative Cases', y='Cases', 
-title="Successful Intervention Rate of Eastern Region cities", 
-log_x=True, size='Cumulative Cases', color='City', animation_frame='Date', 
-range_x=[x_min,x_max], range_y=[y_min,y_max])
-
-
-df = grouped_daily_regions_weekly.copy()
-df['Date'] = pd.to_datetime(df['Date'])
-df['Date'] = df['Date'].dt.strftime('%m/%d/%Y')
-x_min=np.min(df['Cumulative Cases'])+1
-x_max=np.max(df['Cumulative Cases'])
-x_max+=x_max*10
-y_min=np.min(df['Cases'])+1
-y_max=np.max(df['Cases'])
-y_max+=y_max/10
-Intervention_Scatter_Region = px.scatter(df, x='Cumulative Cases', y='Cases', 
-title="Successful Intervention Rate of Saudi Arabia Regions", 
-size='Cumulative Cases', log_x=True, color='region', animation_frame='Date', 
-range_x=[x_min,x_max], range_y=[y_min,y_max])
-
-
 #END OF FIGURES
 ###########################################################################
 ###########################################################################
 ###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-
-
-#######################################################
-#######################################################
-#######################################################
 
 
 #App settings
+###########################################################################
+###########################################################################
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server # the Flask app
 
 #Tables
+###########################################################################
+###########################################################################
 table = dbc.Table.from_dataframe(grouped_daily_weekly, striped=True, bordered=True, hover=True, id='Tables')
 
-#Cards
+#Cards of Summary
+###########################################################################
+###########################################################################
 first_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H5("Today's Recoveries", className="card-title"),
+            html.H5("Last Recoveries", className="card-title"),
             html.P("%5d"%Daily_Recoveries),
         ]
     ),
@@ -245,7 +108,7 @@ first_card = dbc.Card(
 second_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H5("Today's Mortalities", className="card-title"),
+            html.H5("Last Mortalities", className="card-title"),
             html.P("%5d"%Daily_Mortalities),
         ]
     ),
@@ -257,7 +120,7 @@ second_card = dbc.Card(
 third_card = dbc.Card(
     dbc.CardBody(
         [
-            html.H5("Today's Cases", className="card-title"),
+            html.H5("Last Cases", className="card-title"),
             html.P("%5d"%Daily_Cases),
         ]
     ),
@@ -266,6 +129,9 @@ third_card = dbc.Card(
  #       'margin': 20, 
     },
 )
+#End of Row 1 in Summary
+###########################################################################
+###########################################################################
 Fourth_card = dbc.Card(
     dbc.CardBody(
         [
@@ -304,24 +170,32 @@ Sixth_card = dbc.Card(
 cards = dbc.Row([dbc.Col(first_card, width=4), dbc.Col(second_card, width=4), dbc.Col(third_card, width=4)], id='Summary')
 cards2 = dbc.Row([dbc.Col(Fourth_card, width=4), dbc.Col(Fifth_card, width=4), dbc.Col(Sixth_card, width=4)])
 
-#Graphs
+#End of Summary Cards
+###########################################################################
+###########################################################################
+
+#Graphs to use in App. Copied from Graphs.py
+###########################################################################
+###########################################################################
 Graph1=html.Div(
         dcc.Graph(
-        figure=NewCases_Bar_E
+        figure=NewCases_Bar_E #grouped_daily_cities
         )
     )
 Graph2=html.Div(
         dcc.Graph(
-        figure=Cases_Bar_City_E
+        figure=Cases_Bar_City_E #Cases_Bar_City_E
         )
     )
 Graph3=html.Div(
         dcc.Graph(
-        figure=Active_Map_Region
+        figure=Active_Map_Region #df
         )
     )
 
-#Rows
+#Layout of Graphs
+###########################################################################
+###########################################################################
 row = html.Div(
     [
         dbc.Row(
@@ -345,6 +219,8 @@ row2 = html.Div(
 )
 
 #NavBar
+###########################################################################
+###########################################################################
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Summary", href="#Summary", external_link=True)),
@@ -360,7 +236,9 @@ navbar = dbc.NavbarSimple(
    # sticky='top',
 )
 
-#Layout of DOC
+#Layout of HTML DOC
+###########################################################################
+###########################################################################
 def serve_layout():
     return html.Div(children=[
     navbar,
