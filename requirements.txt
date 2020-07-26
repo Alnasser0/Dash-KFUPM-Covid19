@@ -31,9 +31,7 @@ python-dateutil==2.8.1
 pytz==2020.1
 requests==2.24.0
 retrying==1.3.3
-six @ file:///home/conda/feedstock_root/build_artifacts/six_1590081179328/work
 toml==0.10.1
-tzlocal @ file:///home/conda/feedstock_root/build_artifacts/tzlocal_1588939190034/work
 urllib3==1.25.9
 Werkzeug==1.0.1
 wget==3.2
