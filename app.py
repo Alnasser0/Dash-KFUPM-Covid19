@@ -2,85 +2,46 @@
 
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
+
+#AppAutomater.py has App graphs and data
+#Graphs.py has all graphs
+#Data.py has all data processing stuff
+#Downloader.py is used to download files daily
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import AppAutomater as g
+from dash.dependencies import Input, Output
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 import plotly.express as px
-import pandas as pd
-import numpy as np
-import json
+scheduler = BackgroundScheduler()
 
-#Read Only Needed Data
+#Scheduler to update data
 ###########################################################################
 ###########################################################################
-grouped_daily_cities=pd.read_csv('Data/grouped_daily_cities.csv')
-grouped_cumulative_cities=pd.read_csv('Data/grouped_cumulative_cities.csv')
-grouped_daily_weekly=pd.read_csv('Data/grouped_daily_weekly.csv')
-df=pd.read_csv('Data/df.csv')
-df_Total=pd.read_csv('Data/Total.csv')
+def Update_Import():
+    import AppAutomater as g
 
-#Total Summary of Last Reported Data
-###########################################################################
-###########################################################################
-Daily_Recoveries = df_Total.loc[(df_Total['Indicator'] == 'Recoveries') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
-Daily_Mortalities = df_Total.loc[(df_Total['Indicator'] == 'Mortalities') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
-Daily_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
-Cumulative_Active = df_Total.loc[(df_Total['Indicator'] == 'Active cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
-Cumulative_Critical = df_Total.loc[(df_Total['Indicator'] == 'Critical cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
-Cumulative_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=Update_Import, trigger="interval", days=1)
+scheduler.start()
 
-#Changing variable of Eastern Regions cities since the data is not fixed.
-###########################################################################
-###########################################################################
-count_cities=len(grouped_cumulative_cities.City.unique())
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
 
-
-#FIGURES SECTION
-###########################################################################
+#Functions
 ###########################################################################
 ###########################################################################
 
-#Name Convention: [Data type like Active, Mortalities, etc. if Daily:New, special:All]_[Graph Type ex Line or Bar or Scatter]_[Grouped By]_[Region: E if Eastren, else nothing]
-#Name Example: Active Cases represented in Bar Chart Grouped by City in the Eastern Region (Active_Bar_City_E)
-#Codes here are copied from Graphs python folder.
+#Used to get values of a table
+def get_options(list_stocks):
+    dict_list = []
+    for i in list_stocks:
+        dict_list.append({'label': i, 'value': i})
 
-NewCases_Bar_E = px.bar(grouped_daily_cities.sort_values('Date', 
-ascending=True).tail(count_cities).sort_values('Cases'), x="Cases", y="City", title="New Cases", orientation='h')
-NewCases_Bar_E.update_layout(
-yaxis = dict(
-tickfont = dict(size=7)))
-
-Cases_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
-ascending=True).tail(count_cities).sort_values('Cases')[grouped_cumulative_cities.sort_values('Date', 
-ascending=True).tail(count_cities).sort_values('Cases').Cases > 50], x="Cases", y="City", 
-title="Aggregated Confirmed Cases", orientation='h')
-Cases_Bar_City_E.update_layout(
-yaxis = dict(
-tickfont = dict(size=7)))
-
-f = open('SAU-geo.json') 
-file = json.load(f)
-
-Active_Map_Region = px.choropleth(data_frame = df,
-                    geojson=file,
-                    locations="index",
-                    color= "Active cases",  # value that varies
-                    hover_name= "region",
-                    featureidkey='properties.id',
-                    color_continuous_scale="Viridis",  #  color scale
-                    scope='asia',
-                    title='Saudi Arabia Active Cases'
-                    )
-Active_Map_Region.update_geos(center ={'lon': 45.0792, 'lat': 23.9959},
-               lataxis_range= [15, 32], lonaxis_range=[33, 57])
-
-
-#END OF FIGURES
-###########################################################################
-###########################################################################
-###########################################################################
-
+    return dict_list
 
 #App settings
 ###########################################################################
@@ -91,7 +52,29 @@ server = app.server # the Flask app
 #Tables
 ###########################################################################
 ###########################################################################
-table = dbc.Table.from_dataframe(grouped_daily_weekly, striped=True, bordered=True, hover=True, id='Tables')
+table = dbc.Table.from_dataframe(g.grouped_daily_weekly, striped=True, bordered=True, hover=True, id='Tables')
+
+
+#Dropdowns
+dropdown = html.Div([
+            dcc.Dropdown(
+                id='RegionSelector',
+                options=get_options(g.available_regions),
+                value='Eastern Region'
+            ),
+        ],
+        style={'width': '48%', 'display': 'inline-block'})
+LogYesNo = html.Div([
+            dcc.Dropdown(
+                id='LogSelector',
+                options=[
+                    {'label': 'Turn on Logarithmic Scale', 'value': 'Yes'},
+                    {'label': 'Turn off Logarithmic Scale', 'value': 'No'},
+                ],
+                value='Yes'
+            ),
+        ],
+        style={'width': '48%', 'display': 'inline-block'})
 
 #Cards of Summary
 ###########################################################################
@@ -100,7 +83,7 @@ first_card = dbc.Card(
     dbc.CardBody(
         [
             html.H5("Last Recoveries", className="card-title"),
-            html.P("%5d"%Daily_Recoveries),
+            html.P("%5d"%g.Daily_Recoveries),
         ]
     ),
     className="ml-3 mb-3",
@@ -112,7 +95,7 @@ second_card = dbc.Card(
     dbc.CardBody(
         [
             html.H5("Last Mortalities", className="card-title"),
-            html.P("%5d"%Daily_Mortalities),
+            html.P("%5d"%g.Daily_Mortalities),
         ]
     ),
     className="mb-3",
@@ -124,7 +107,7 @@ third_card = dbc.Card(
     dbc.CardBody(
         [
             html.H5("Last Cases", className="card-title"),
-            html.P("%5d"%Daily_Cases),
+            html.P("%5d"%g.Daily_Cases),
         ]
     ),
     className="mb-3",
@@ -139,7 +122,8 @@ Fourth_card = dbc.Card(
     dbc.CardBody(
         [
             html.H5("Total Active", className="card-title"),
-            html.P("%6d"%Cumulative_Active),        ]
+            html.P("%6d"%g.Cumulative_Active),        
+        ]
     ),
     className="ml-3 mb-3",
     style={
@@ -150,7 +134,7 @@ Fifth_card = dbc.Card(
     dbc.CardBody(
         [
             html.H5("Critical Cases", className="card-title"),
-            html.P("%5d"%Cumulative_Critical),
+            html.P("%5d"%g.Cumulative_Critical),
         ]
     ),
     className="mb-3",
@@ -162,7 +146,7 @@ Sixth_card = dbc.Card(
     dbc.CardBody(
         [
             html.H5("All Cases", className="card-title"),
-            html.P("%7d"%Cumulative_Cases),
+            html.P("%7d"%g.Cumulative_Cases),
         ]
     ),
     className="mb-3",
@@ -177,22 +161,28 @@ cards2 = dbc.Row([dbc.Col(Fourth_card, width=4), dbc.Col(Fifth_card, width=4), d
 ###########################################################################
 ###########################################################################
 
-#Graphs to use in App. Copied from Graphs.py
+#Graphs to use in App. Copied from AppAutomater.py
 ###########################################################################
 ###########################################################################
 Graph1=html.Div(
         dcc.Graph(
-        figure=NewCases_Bar_E #grouped_daily_cities
+        figure=g.NewCases_Bar_E #grouped_daily_cities
         )
     )
 Graph2=html.Div(
         dcc.Graph(
-        figure=Cases_Bar_City_E #Cases_Bar_City_E
+        figure=g.Cases_Bar_City_E #Cases_Bar_City_E
         )
     )
 Graph3=html.Div(
         dcc.Graph(
-        figure=Active_Map_Region #df
+        figure=g.Active_Map_Region #df
+        )
+    )
+Graph_DropDown=html.Div(
+        dcc.Graph(
+        figure=g.NewCases_LineLog_E, #
+        id='indicator-graphic'
         )
     )
 
@@ -206,7 +196,6 @@ row = html.Div(
                 dbc.Col(Graph1),
                 dbc.Col(Graph2),
             ],
-            id='Graphs',
         ),
     ]
 )
@@ -227,7 +216,7 @@ row2 = html.Div(
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Summary", href="#Summary", external_link=True)),
-        dbc.NavItem(dbc.NavLink("Charts", href="#Graphs", external_link=True)),
+        dbc.NavItem(dbc.NavLink("Charts", href="#indicator-graphic", external_link=True)),
         dbc.NavItem(dbc.NavLink("Maps", href="#Maps", external_link=True)),
         dbc.NavItem(dbc.NavLink("Tables", href="#Tables", external_link=True)),
         dbc.NavItem(dbc.NavLink("Simulation", href="#Simulation", external_link=True)),
@@ -262,6 +251,9 @@ def serve_layout():
     ),
     cards,
     cards2,
+    dropdown,
+    LogYesNo,
+    Graph_DropDown,
     row,
     row2,
     html.Div(
@@ -273,6 +265,23 @@ def serve_layout():
 ]
 
 )
+
+#Callbacks
+
+@app.callback(
+    Output('indicator-graphic', 'figure'),
+    [Input('RegionSelector', 'value'),
+    Input('LogSelector', 'value')])
+def update_graph(value, value2):
+    if(value2 == 'Yes'):
+        graph = px.line(g.grouped_daily_regions[g.grouped_daily_regions['region'] == value], x="Date", y="Cases", 
+        title="{} Region Daily Confirmed Cases Over Time".format(value), log_y=True)
+        graph.update_xaxes(rangeslider_visible=True)
+    else:
+        graph = px.line(g.grouped_daily_regions[g.grouped_daily_regions['region'] == value], x="Date", y="Cases", 
+        title="{} Region Daily Confirmed Cases Over Time".format(value))
+        graph.update_xaxes(rangeslider_visible=True)
+    return graph
 
 #DOC initialization
 app.layout = serve_layout
