@@ -176,6 +176,81 @@ Graph2=html.Div(
     )
 Graph3=html.Div(
         dcc.Graph(
+        figure=g.Count_BarArea_Cases_E #df
+        )
+    )
+Graph4=html.Div(
+        dcc.Graph(
+        figure=g.Count_Line_Cases_E #df
+        )
+    )
+Graph5=html.Div(
+        dcc.Graph(
+        figure=g.Active_Bar_City_E #df
+        )
+    )
+Graph6=html.Div(
+        dcc.Graph(
+        figure=g.Active_Bar_E #df
+        )
+    )
+Graph7=html.Div(
+        dcc.Graph(
+        figure=g.Mortalities_Bar_City_E
+        )
+    )
+Graph8=html.Div(
+        dcc.Graph(
+        figure=g.NewMortalities_Bar_City_E
+        )
+    )
+Graph9=html.Div(
+        dcc.Graph(
+        figure=g.NewMortalities_Bar_E
+        )
+    )
+Graph10=html.Div(
+        dcc.Graph(
+        figure=g.Mortalities_Scatter_City_E
+        )
+    )
+Graph11=html.Div(
+        dcc.Graph(
+        figure=g.Count_Bar_Cases_E
+        )
+    )
+Graph12=html.Div(
+        dcc.Graph(
+        figure=g.RecoveryRate_Line_E
+        )
+    )
+Graph13=html.Div(
+        dcc.Graph(
+        figure=g.CFR_Line_E
+        )
+    )
+Graph14=html.Div(
+        dcc.Graph(
+        figure=g.CFR_Line_City_E
+        )
+    )
+Graph15=html.Div(
+        dcc.Graph(
+        figure=g.Intervention_Scatter_E
+        )
+    )
+Graph16=html.Div(
+        dcc.Graph(
+        figure=g.Intervention_Scatter_City_E
+        )
+    )
+Graph17=html.Div(
+        dcc.Graph(
+        figure=g.Intervention_Scatter_Region
+        )
+    )
+Graph18=html.Div(
+        dcc.Graph(
         figure=g.Active_Map_Region #df
         )
     )
@@ -189,7 +264,7 @@ Graph_DropDown=html.Div(
 #Layout of Graphs
 ###########################################################################
 ###########################################################################
-row = html.Div(
+row1 = html.Div(
     [
         dbc.Row(
             [
@@ -204,6 +279,85 @@ row2 = html.Div(
         dbc.Row(
             [
                 dbc.Col(Graph3),
+                dbc.Col(Graph4),
+            ],
+        ),
+    ]
+)
+row3 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph5),
+                dbc.Col(Graph6),
+            ],
+        ),
+    ]
+)
+row4 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph7),
+                dbc.Col(Graph8),
+            ],
+        ),
+    ]
+)
+row5 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph9),
+                dbc.Col(Graph10),
+            ],
+        ),
+    ]
+)
+row6 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph11),
+                dbc.Col(Graph12),
+            ],
+        ),
+    ]
+)
+row7 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph13),
+                dbc.Col(Graph14),
+            ],
+        ),
+    ]
+)
+row8 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph15),
+                dbc.Col(Graph16),
+            ],
+        ),
+    ]
+)
+row9 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph17),
+            ],
+        ),
+    ]
+)
+row10 = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(Graph18),
             ],
             id='Maps',
         ),
@@ -225,7 +379,7 @@ navbar = dbc.NavbarSimple(
     brand_href="#",
     color="dark",
     dark=True,
-   # sticky='top',
+    sticky='top',
 )
 
 #Layout of HTML DOC
@@ -246,7 +400,7 @@ def serve_layout():
         },
     ),
     dbc.Container(
-    dbc.Alert("This is a Dashboard that is used to analyze MOH data of COVID19 in Saudi Arabia. It is maintained by KFUPM, COE Department.", color="success"),
+    dbc.Alert("This is a dashboard that is used to analyze MOH data of COVID19 in Saudi Arabia. As it is an initial build, we are more focused on Eastern Region data analysis. Note that the dashboard is maintained by KFUPM, COE Department.", color="success"),
     className="p-5",
     ),
     cards,
@@ -254,14 +408,37 @@ def serve_layout():
     dropdown,
     LogYesNo,
     Graph_DropDown,
-    row,
+    row1,
     row2,
+    row3,
+    row4,
+    row5,
+    row6,
+    row7,
+    row8,
+    row9,
+    row10,
     html.Div(
         table
     ),
     html.Footer(
-    dbc.Alert("This is a Footer", color="success")
+    dbc.Alert(
+        [   "All Rights Reserved for Original Author, Alnasser Abdullah, and KFUPM. Follow our ", 
+            html.A("github", href="https://github.com/Alnasser0/Dash-KFUPM-Covid19"),
+             " for more information."
+        ],
+        color="dark",
+        className="text-center",
+        #style="mb-0",
+        )
     )
+    #github for more information.
+           # dbc.Alert(
+           # [
+           #     "This is a danger alert with an ",
+           #     html.A("example link", href="#", className="alert-link"),
+           # ],
+           # color="danger",
 ]
 
 )
