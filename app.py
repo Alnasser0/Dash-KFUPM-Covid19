@@ -31,6 +31,10 @@ scheduler.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
+def Fixed_Graph(Graph):
+    Graph.layout.xaxis.fixedrange = True
+    Graph.layout.yaxis.fixedrange = True
+    return Graph
 #Functions
 ###########################################################################
 ###########################################################################
@@ -166,87 +170,87 @@ cards2 = dbc.Row([dbc.Col(Fourth_card, width=4), dbc.Col(Fifth_card, width=4), d
 ###########################################################################
 Graph1=html.Div(
         dcc.Graph(
-        figure=g.NewCases_Bar_E #grouped_daily_cities
+        figure=Fixed_Graph(g.NewCases_Bar_E) #grouped_daily_cities
         )
     )
 Graph2=html.Div(
         dcc.Graph(
-        figure=g.Cases_Bar_City_E #Cases_Bar_City_E
+        figure=Fixed_Graph(g.Cases_Bar_City_E) #Cases_Bar_City_E
         )
     )
 Graph3=html.Div(
         dcc.Graph(
-        figure=g.Count_BarArea_Cases_E #df
+        figure=Fixed_Graph(g.Count_BarArea_Cases_E) #df
         )
     )
 Graph4=html.Div(
         dcc.Graph(
-        figure=g.Count_Line_Cases_E #df
+        figure=Fixed_Graph(g.Count_Line_Cases_E) #df
         )
     )
 Graph5=html.Div(
         dcc.Graph(
-        figure=g.Active_Bar_City_E #df
+        figure=Fixed_Graph(g.Active_Bar_City_E) #df
         )
     )
 Graph6=html.Div(
         dcc.Graph(
-        figure=g.Active_Bar_E #df
+        figure=Fixed_Graph(g.Active_Bar_E) #df
         )
     )
 Graph7=html.Div(
         dcc.Graph(
-        figure=g.Mortalities_Bar_City_E
+        figure=Fixed_Graph(g.Mortalities_Bar_City_E)
         )
     )
 Graph8=html.Div(
         dcc.Graph(
-        figure=g.NewMortalities_Bar_City_E
+        figure=Fixed_Graph(g.NewMortalities_Bar_City_E)
         )
     )
 Graph9=html.Div(
         dcc.Graph(
-        figure=g.NewMortalities_Bar_E
+        figure=Fixed_Graph(g.NewMortalities_Bar_E)
         )
     )
 Graph10=html.Div(
         dcc.Graph(
-        figure=g.Mortalities_Scatter_City_E
+        figure=Fixed_Graph(g.Mortalities_Scatter_City_E)
         )
     )
 Graph11=html.Div(
         dcc.Graph(
-        figure=g.Count_Bar_Cases_E
+        figure=Fixed_Graph(g.Count_Bar_Cases_E)
         )
     )
 Graph12=html.Div(
         dcc.Graph(
-        figure=g.RecoveryRate_Line_E
+        figure=Fixed_Graph(g.RecoveryRate_Line_E)
         )
     )
 Graph13=html.Div(
         dcc.Graph(
-        figure=g.CFR_Line_E
+        figure=Fixed_Graph(g.CFR_Line_E)
         )
     )
 Graph14=html.Div(
         dcc.Graph(
-        figure=g.CFR_Line_City_E
+        figure=Fixed_Graph(g.CFR_Line_City_E)
         )
     )
 Graph15=html.Div(
         dcc.Graph(
-        figure=g.Intervention_Scatter_E
+        figure=Fixed_Graph(g.Intervention_Scatter_E)
         )
     )
 Graph16=html.Div(
         dcc.Graph(
-        figure=g.Intervention_Scatter_City_E
+        figure=Fixed_Graph(g.Intervention_Scatter_City_E)
         )
     )
 Graph17=html.Div(
         dcc.Graph(
-        figure=g.Intervention_Scatter_Region
+        figure=Fixed_Graph(g.Intervention_Scatter_Region)
         )
     )
 Graph18=html.Div(
@@ -256,7 +260,7 @@ Graph18=html.Div(
     )
 Graph_DropDown=html.Div(
         dcc.Graph(
-        figure=g.NewCases_LineLog_E, #
+        figure=Fixed_Graph(g.NewCases_LineLog_E), #
         id='indicator-graphic'
         )
     )
@@ -418,6 +422,10 @@ def serve_layout():
     row8,
     row9,
     row10,
+    dbc.Container(
+    dbc.Alert("Eastern Region Weekly Data!", color="success"),
+    className="text-center",
+    ),
     html.Div(
         table
     ),
@@ -458,7 +466,7 @@ def update_graph(value, value2):
         graph = px.line(g.grouped_daily_regions[g.grouped_daily_regions['region'] == value], x="Date", y="Cases", 
         title="{} Region Daily Confirmed Cases Over Time".format(value))
         graph.update_xaxes(rangeslider_visible=True)
-    return graph
+    return Fixed_Graph(graph)
 
 #DOC initialization
 app.layout = serve_layout

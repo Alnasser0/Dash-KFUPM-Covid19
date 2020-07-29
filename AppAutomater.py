@@ -90,6 +90,9 @@ NewMortalities_Bar_City_E = px.bar(grouped_daily_cities.sort_values('Date',
 ascending=True).tail(count_cities).sort_values('Mortalities')[grouped_daily_cities.sort_values('Date', 
 ascending=True).tail(count_cities).sort_values('Mortalities').Mortalities >=1], height=600,x="Mortalities", y="City", 
 title="New Deaths", orientation='h')
+NewMortalities_Bar_City_E.update_layout(
+yaxis = dict(
+tickfont = dict(size=count_cities//2)))
 
 Mortalities_Bar_City_E = px.bar(grouped_cumulative_cities.sort_values('Date', 
 ascending=True).tail(count_cities).sort_values('Mortalities')[grouped_cumulative_cities.sort_values('Date', 
