@@ -2,15 +2,23 @@ import pandas as pd
 import numpy as np
 from datetime import timedelta
 import json
+from pymongo import MongoClient
+
+###########################################################################
+#CONNECT TO DB
+client = MongoClient("mongodb+srv://Alnasser0:test@covid19-kfupm.8orak.azure.mongodb.net/COVID19-KFUPM?retryWrites=true&w=majority")
+db = client['COVID19-KFUPM']
+collection = db['COVID19']
+data_from_db=collection.find_one({"index":"SA_data"})
+
 
 ###########################################################################
 ###########################################################################
 ###########################################################################
 ###########################################################################
 #DATA
-
-#Read Data
-df = pd.read_csv("SA_data.csv", sep=None, engine='python')
+df = pd.DataFrame(data_from_db["data"])
+data_dict = df.to_dict("records")
 
 
 #Clean Daily Data
@@ -94,26 +102,68 @@ for i in range(len(df.index)):
 df_Total['Date'] = pd.to_datetime(df_Total['Date'])
 df_Total=df_Total.loc[(df_Total['Date'] == df_Total['Date'].max())]
 
-#Dump Data for Fast Access
-grouped_daily.to_csv('Data/grouped_daily.csv', index=False )
-grouped_daily_cities.to_csv('Data/grouped_daily_cities.csv', index=False)
-grouped_daily_regions.to_csv('Data/grouped_daily_regions.csv', index=False)
-grouped_cumulative.to_csv('Data/grouped_cumulative.csv', index=False)
-grouped_cumulative_cities.to_csv('Data/grouped_cumulative_cities.csv', index=False)
-grouped_cumulative_regions.to_csv('Data/grouped_cumulative_regions.csv', index=False)
-grouped_daily_melt.to_csv('Data/grouped_daily_melt.csv', index=False)
-grouped_daily_melt_cities.to_csv('Data/grouped_daily_melt_cities.csv', index=False)
-grouped_daily_melt_regions.to_csv('Data/grouped_daily_melt_regions.csv', index=False)
-grouped_cumulative_melt.to_csv('Data/grouped_cumulative_melt.csv', index=False)
-grouped_cumulative_melt_cities.to_csv('Data/grouped_cumulative_melt_cities.csv', index=False)
-grouped_cumulative_melt_regions.to_csv('Data/grouped_cumulative_melt_regions.csv', index=False)
-grouped_daily_weekly.to_csv('Data/grouped_daily_weekly.csv', index=False)
-grouped_daily_cities_weekly.to_csv('Data/grouped_daily_cities_weekly.csv', index=False)
-grouped_daily_regions_weekly.to_csv('Data/grouped_daily_regions_weekly.csv', index=False)
-grouped_cumulative_weekly.to_csv('Data/grouped_cumulative_weekly.csv', index=False)
-df.to_csv('Data/df.csv', index=False)
-df_Total.to_csv('Data/Total.csv', index=False)
+# #Dump Data for Fast Access
+# grouped_daily.to_csv('Data/grouped_daily.csv', index=False )
+# grouped_daily_cities.to_csv('Data/grouped_daily_cities.csv', index=False)
+# grouped_daily_regions.to_csv('Data/grouped_daily_regions.csv', index=False)
+# grouped_cumulative.to_csv('Data/grouped_cumulative.csv', index=False)
+# grouped_cumulative_cities.to_csv('Data/grouped_cumulative_cities.csv', index=False)
+# grouped_cumulative_regions.to_csv('Data/grouped_cumulative_regions.csv', index=False)
+# grouped_daily_melt.to_csv('Data/grouped_daily_melt.csv', index=False)
+# grouped_daily_melt_cities.to_csv('Data/grouped_daily_melt_cities.csv', index=False)
+# grouped_daily_melt_regions.to_csv('Data/grouped_daily_melt_regions.csv', index=False)
+# grouped_cumulative_melt.to_csv('Data/grouped_cumulative_melt.csv', index=False)
+# grouped_cumulative_melt_cities.to_csv('Data/grouped_cumulative_melt_cities.csv', index=False)
+# grouped_cumulative_melt_regions.to_csv('Data/grouped_cumulative_melt_regions.csv', index=False)
+# grouped_daily_weekly.to_csv('Data/grouped_daily_weekly.csv', index=False)
+# grouped_daily_cities_weekly.to_csv('Data/grouped_daily_cities_weekly.csv', index=False)
+# grouped_daily_regions_weekly.to_csv('Data/grouped_daily_regions_weekly.csv', index=False)
+# grouped_cumulative_weekly.to_csv('Data/grouped_cumulative_weekly.csv', index=False)
+# df.to_csv('Data/df.csv', index=False)
+# df_Total.to_csv('Data/Total.csv', index=False)
 
+#Dump Data Online
+
+grouped_daily=grouped_daily.to_dict("records")
+grouped_daily_cities=grouped_daily_cities.to_dict("records")
+grouped_daily_regions=grouped_daily_regions.to_dict("records")
+grouped_cumulative=grouped_cumulative.to_dict("records")
+grouped_cumulative_cities=grouped_cumulative_cities.to_dict("records")
+grouped_cumulative_regions=grouped_cumulative_regions.to_dict("records")
+grouped_daily_melt=grouped_daily_melt.to_dict("records")
+grouped_daily_melt_cities=grouped_daily_melt_cities.to_dict("records")
+grouped_daily_melt_regions=grouped_daily_melt_regions.to_dict("records")
+grouped_cumulative_melt=grouped_cumulative_melt.to_dict("records")
+grouped_cumulative_melt_cities=grouped_cumulative_melt_cities.to_dict("records")
+grouped_cumulative_melt_regions=grouped_cumulative_melt_regions.to_dict("records")
+grouped_daily_weekly=grouped_daily_weekly.to_dict("records")
+grouped_daily_cities_weekly=grouped_daily_cities_weekly.to_dict("records")
+grouped_daily_regions_weekly=grouped_daily_regions_weekly.to_dict("records")
+grouped_cumulative_weekly=grouped_cumulative_weekly.to_dict("records")
+df=df.to_dict("records")
+df_Total=df_Total.to_dict("records")
+
+# Insert collection
+collection.delete_many({})
+collection.insert_one({"index":"SA_data","data":data_dict})
+collection.insert_one({"index":"grouped_daily","data":grouped_daily})
+collection.insert_one({"index":"grouped_daily_cities","data":grouped_daily_cities})
+collection.insert_one({"index":"grouped_daily_regions","data":grouped_daily_regions})
+collection.insert_one({"index":"grouped_cumulative","data":grouped_cumulative})
+collection.insert_one({"index":"grouped_cumulative_cities","data":grouped_cumulative_cities})
+collection.insert_one({"index":"grouped_cumulative_regions","data":grouped_cumulative_regions})
+collection.insert_one({"index":"grouped_daily_melt","data":grouped_daily_melt})
+collection.insert_one({"index":"grouped_daily_melt_cities","data":grouped_daily_melt_cities})
+collection.insert_one({"index":"grouped_daily_melt_regions","data":grouped_daily_melt_regions})
+collection.insert_one({"index":"grouped_cumulative_melt","data":grouped_cumulative_melt})
+collection.insert_one({"index":"grouped_cumulative_melt_cities","data":grouped_cumulative_melt_cities})
+collection.insert_one({"index":"grouped_cumulative_melt_regions","data":grouped_cumulative_melt_regions})
+collection.insert_one({"index":"grouped_daily_weekly","data":grouped_daily_weekly})
+collection.insert_one({"index":"grouped_daily_cities_weekly","data":grouped_daily_cities_weekly})
+collection.insert_one({"index":"grouped_daily_regions_weekly","data":grouped_daily_regions_weekly})
+collection.insert_one({"index":"grouped_cumulative_weekly","data":grouped_cumulative_weekly})
+collection.insert_one({"index":"df","data":df})
+collection.insert_one({"index":"df_Total","data":df_Total})
 
 #END OF DATA PROCESS
 ###########################################################################
