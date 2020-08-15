@@ -274,7 +274,7 @@ g()
 #scheduler.start()
 
 # Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
+#atexit.register(lambda: scheduler.shutdown())
 
 def Fixed_Graph(Graph):
     Graph.layout.xaxis.fixedrange = True
