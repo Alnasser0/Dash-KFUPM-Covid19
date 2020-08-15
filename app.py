@@ -260,15 +260,16 @@ def g():
     ###########################################################################
     ###########################################################################
     ###########################################################################
-def Download_Data():
-    import Uploader
-def Data_Update():
-    import Data
+#def Download_Data():
+#    import Uploader
+#def Data_Update():
+#    import Data
+
 g()
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(func=Download_Data, trigger="interval", minutes=1410)
-scheduler.add_job(func=Data_Update, trigger="interval", minutes=1425)
+#scheduler.add_job(func=Download_Data, trigger="interval", minutes=1410)
+#scheduler.add_job(func=Data_Update, trigger="interval", minutes=1425)
 scheduler.add_job(func=g, trigger="interval", minutes=1440)
 scheduler.start()
 
