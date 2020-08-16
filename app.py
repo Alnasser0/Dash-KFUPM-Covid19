@@ -12,8 +12,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
-from apscheduler.schedulers.background import BackgroundScheduler
-import atexit
+#from apscheduler.schedulers.background import BackgroundScheduler
+#import atexit
 import plotly.express as px
 import json
 import numpy as np

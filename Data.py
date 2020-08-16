@@ -3,13 +3,40 @@ import numpy as np
 from datetime import timedelta
 import json
 from pymongo import MongoClient
+import requests
+import os
+import shutil
+import json
+
+
+url = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
+req = requests.get(url)
+url_content = req.content
+csv_file = open('SA_data.csv', 'wb')
+csv_file.write(url_content)
+csv_file.close()
+data = pd.read_csv("SA_data.csv", sep=None, engine='python') # loading csv file
+
+# Connect to MongoDB
+client = MongoClient("mongodb+srv://Alnasser0:test@covid19-kfupm.8orak.azure.mongodb.net/COVID19-KFUPM?retryWrites=true&w=majority")
+
+db = client['COVID19-KFUPM']
+collection = db['COVID19']
+collection.delete_many({})
+#data_dict = data.to_dict("records")
+
+# Insert collection
+#collection.delete_one({"index":"SA_data"})
+#collection.insert_one({"index":"SA_data","data":data_dict})
+#collection.insert_many(data_dict)
+
 
 ###########################################################################
 #CONNECT TO DB
 client = MongoClient("mongodb+srv://Alnasser0:test@covid19-kfupm.8orak.azure.mongodb.net/COVID19-KFUPM?retryWrites=true&w=majority")
 db = client['COVID19-KFUPM']
 collection = db['COVID19']
-data_from_db=collection.find_one({"index":"SA_data"})
+#data_from_db=collection.find_one({"index":"SA_data"})
 
 
 ###########################################################################
@@ -17,12 +44,12 @@ data_from_db=collection.find_one({"index":"SA_data"})
 ###########################################################################
 ###########################################################################
 #DATA
-df = pd.DataFrame(data_from_db["data"])
-data_dict = df.to_dict("records")
+#df = pd.DataFrame(data_from_db["data"])
+#data_dict = df.to_dict("records")
 
 
 #Clean Daily Data
-df = df.dropna(subset=["region"])
+df = data.dropna(subset=["region"])
 df_Daily = df.rename(columns = {"Daily / Cumulative":"Daily"})
 df_Total = df_Daily.loc[(df_Daily['region'] == 'Total')]
 df_Daily = df_Daily.loc[(df_Daily['Daily'] == 'Daily') & (df_Daily['region'] != 'Total')]
@@ -144,8 +171,7 @@ df=df.to_dict("records")
 df_Total=df_Total.to_dict("records")
 
 # Insert collection
-collection.delete_many({})
-collection.insert_one({"index":"SA_data","data":data_dict})
+#collection.insert_one({"index":"SA_data","data":data_dict})
 collection.insert_one({"index":"grouped_daily","data":grouped_daily})
 collection.insert_one({"index":"grouped_daily_cities","data":grouped_daily_cities})
 collection.insert_one({"index":"grouped_daily_regions","data":grouped_daily_regions})
