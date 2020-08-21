@@ -12,33 +12,69 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
-from apscheduler.schedulers.background import BackgroundScheduler
-import atexit
+#from apscheduler.schedulers.background import BackgroundScheduler
+#import atexit
 import plotly.express as px
 import json
 import numpy as np
 import pandas as pd
+from pymongo import MongoClient
 
 #Scheduler to update data
 ###########################################################################
 ###########################################################################
 def g():
-
+    #client = 
+    #db = 
+    #collection = 
     #Read Only Needed Data
     ###########################################################################
     ###########################################################################
-    grouped_daily_cities=pd.read_csv('Data/grouped_daily_cities.csv')
-    grouped_cumulative_cities=pd.read_csv('Data/grouped_cumulative_cities.csv')
-    g.grouped_daily_weekly=pd.read_csv('Data/grouped_daily_weekly.csv')
-    df=pd.read_csv('Data/df.csv')
-    df_Total=pd.read_csv('Data/Total.csv')
-    g.grouped_daily_regions=pd.read_csv('Data/grouped_daily_regions.csv')
-    grouped_cumulative_melt=pd.read_csv('Data/grouped_cumulative_melt.csv')
-    grouped_cumulative=pd.read_csv('Data/grouped_cumulative.csv')
-    grouped_daily=pd.read_csv('Data/grouped_daily.csv')
-    grouped_daily_melt=pd.read_csv('Data/grouped_daily_melt.csv')
-    grouped_daily_cities_weekly=pd.read_csv('Data/grouped_daily_cities_weekly.csv')
-    grouped_daily_regions_weekly=pd.read_csv('Data/grouped_daily_regions_weekly.csv')
+    grouped_daily_cities =  collection.find_one({"index":"grouped_daily_cities"})
+    grouped_daily_cities = pd.DataFrame(grouped_daily_cities["data"])
+    
+    grouped_cumulative_cities =  collection.find_one({"index":"grouped_cumulative_cities"})
+    grouped_cumulative_cities = pd.DataFrame(grouped_cumulative_cities["data"])
+    
+    g.grouped_daily_weekly =  collection.find_one({"index":"grouped_daily_weekly"})
+    g.grouped_daily_weekly = pd.DataFrame(g.grouped_daily_weekly["data"])
+    
+    df =  collection.find_one({"index":"df"})
+    df = pd.DataFrame(df["data"])
+    # df=pd.read_csv('Data/df.csv')
+    
+    df_Total =  collection.find_one({"index":"df_Total"})
+    df_Total = pd.DataFrame(df_Total["data"])
+    # df_Total=pd.read_csv('Data/Total.csv')
+    
+    g.grouped_daily_regions =  collection.find_one({"index":"grouped_daily_regions"})
+    g.grouped_daily_regions = pd.DataFrame(g.grouped_daily_regions["data"])
+    # g.grouped_daily_regions=pd.read_csv('Data/grouped_daily_regions.csv')
+    
+    grouped_cumulative_melt =  collection.find_one({"index":"grouped_cumulative_melt"})
+    grouped_cumulative_melt = pd.DataFrame(grouped_cumulative_melt["data"])
+    # grouped_cumulative_melt=pd.read_csv('Data/grouped_cumulative_melt.csv')
+    
+    grouped_cumulative =  collection.find_one({"index":"grouped_cumulative"})
+    grouped_cumulative = pd.DataFrame(grouped_cumulative["data"])
+    # grouped_cumulative=pd.read_csv('Data/grouped_cumulative.csv')
+    
+    grouped_daily =  collection.find_one({"index":"grouped_daily"})
+    grouped_daily = pd.DataFrame(grouped_daily["data"])
+    # grouped_daily=pd.read_csv('Data/grouped_daily.csv')
+    
+    grouped_daily_melt =  collection.find_one({"index":"grouped_daily_melt"})
+    grouped_daily_melt = pd.DataFrame(grouped_daily_melt["data"])
+    # grouped_daily_melt=pd.read_csv('Data/grouped_daily_melt.csv')
+    
+    grouped_daily_cities_weekly =  collection.find_one({"index":"grouped_daily_cities_weekly"})
+    grouped_daily_cities_weekly = pd.DataFrame(grouped_daily_cities_weekly["data"])
+    # grouped_daily_cities_weekly=pd.read_csv('Data/grouped_daily_cities_weekly.csv')
+    
+    grouped_daily_regions_weekly =  collection.find_one({"index":"grouped_daily_regions_weekly"})
+    grouped_daily_regions_weekly = pd.DataFrame(grouped_daily_regions_weekly["data"])
+    # grouped_daily_regions_weekly=pd.read_csv('Data/grouped_daily_regions_weekly.csv')
+    
     cnf, dth, rec, act = '#393e46', '#ff2e63', '#21bf73', '#fe9801' 
 
 
@@ -224,20 +260,21 @@ def g():
     ###########################################################################
     ###########################################################################
     ###########################################################################
-def Download_Data():
-    import Downloader
-def Data_Update():
-    import Data
-g()
-scheduler = BackgroundScheduler()
+#def Download_Data():
+#    import Uploader
+#def Data_Update():
+#    import Data
 
-scheduler.add_job(func=Download_Data, trigger="interval", minutes=1410)
-scheduler.add_job(func=Data_Update, trigger="interval", minutes=1425)
-scheduler.add_job(func=g, trigger="interval", minutes=1440)
-scheduler.start()
+g()
+#scheduler = BackgroundScheduler()
+
+#scheduler.add_job(func=Download_Data, trigger="interval", minutes=1410)
+#scheduler.add_job(func=Data_Update, trigger="interval", minutes=1425)
+#scheduler.add_job(func=g, trigger="interval", minutes=1440)
+#scheduler.start()
 
 # Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
+#atexit.register(lambda: scheduler.shutdown())
 
 def Fixed_Graph(Graph):
     Graph.layout.xaxis.fixedrange = True
@@ -639,7 +676,7 @@ def serve_layout():
     ),
     html.Footer(
     dbc.Alert(
-        [   "All Rights Reserved for Original Author, Alnasser Abdullah, and KFUPM. Follow our ", 
+        [   "All Rights Reserved for Original Author, Alnasser, and KFUPM. Follow our ", 
             html.A("github", href="https://github.com/Alnasser0/Dash-KFUPM-Covid19"),
              " for more information."
         ],
