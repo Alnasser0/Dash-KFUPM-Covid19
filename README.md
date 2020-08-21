@@ -25,4 +25,4 @@ Future Improvements to consider:
 - Add Arabic Language Support.
 - Improve CSS in the page.
 - Optimize Codes.
-- Use MongoDB or Postgre instead of csv files.
+- Use MongoDB or Postgre instead of csv files. - Done
