@@ -81,12 +81,12 @@ def g():
     #Total Summary of Last Reported Data
     ###########################################################################
     ###########################################################################
-    g.Daily_Recoveries = df_Total.loc[(df_Total['Indicator'] == 'Recoveries') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
-    g.Daily_Mortalities = df_Total.loc[(df_Total['Indicator'] == 'Mortalities') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
-    g.Daily_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Daily')].Cases.iloc[0]
-    g.Cumulative_Active = df_Total.loc[(df_Total['Indicator'] == 'Active cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
-    g.Cumulative_Critical = df_Total.loc[(df_Total['Indicator'] == 'Critical cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
-    g.Cumulative_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Daily'] == 'Cumulative')].Cases.iloc[0]
+    g.Daily_Recoveries = df_Total.loc[(df_Total['Indicator'] == 'Recoveries') & (df_Total['Cumulative'] == 'Daily')].Cases.iloc[0]
+    g.Daily_Mortalities = df_Total.loc[(df_Total['Indicator'] == 'Mortalities') & (df_Total['Cumulative'] == 'Daily')].Cases.iloc[0]
+    g.Daily_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Cumulative'] == 'Daily')].Cases.iloc[0]
+    g.Cumulative_Active = df_Total.loc[(df_Total['Indicator'] == 'Active cases') & (df_Total['Cumulative'] == 'Cumulative')].Cases.iloc[0]
+    g.Cumulative_Critical = df_Total.loc[(df_Total['Indicator'] == 'Critical') & (df_Total['Cumulative'] == 'Cumulative')].Cases.iloc[0]
+    g.Cumulative_Cases = df_Total.loc[(df_Total['Indicator'] == 'Cases') & (df_Total['Cumulative'] == 'Cumulative')].Cases.iloc[0]
 
 
     #Parameters to be used
