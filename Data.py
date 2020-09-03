@@ -49,8 +49,10 @@ collection = db['COVID19']
 
 
 #Clean Daily Data
-df = data.dropna(subset=["region"])
-df_Daily = df.rename(columns = {"Daily / Cumulative":"Daily"})
+df = data.dropna(subset=["Region"])
+df_Daily = df.rename(columns = {"Region":"region"})
+df_Daily = df_Daily.rename(columns = {"Cases (person)":"Cases"})
+df_Daily = df_Daily.rename(columns = {"Daily / Cumulative":"Daily"})
 df_Total = df_Daily.loc[(df_Daily['region'] == 'Total')]
 df_Daily = df_Daily.loc[(df_Daily['Daily'] == 'Daily') & (df_Daily['region'] != 'Total')]
 df_Daily['Date'] = pd.to_datetime(df_Daily['Date'])
@@ -59,7 +61,10 @@ df_Daily = df_Daily.loc[df_Daily['region'] == 'Eastern Region']
 df_Daily
 
 #Clean Cumulative Data
-df_Cumulative = df.rename(columns = {"Daily / Cumulative":"Cumulative"})
+df_Cumulative = df.rename(columns = {"Region":"region"})
+df_Cumulative = df_Cumulative.replace({'Indicator': 'Active'}, 'Active cases')
+df_Cumulative = df_Cumulative.rename(columns = {"Cases (person)":"Cases"})
+df_Cumulative = df_Cumulative.rename(columns = {"Daily / Cumulative":"Cumulative"})
 df_Cumulative = df_Cumulative.loc[(df_Cumulative['Cumulative'] == 'Cumulative') & (df_Cumulative['region'] != 'Total')]
 df_Cumulative['Date'] = pd.to_datetime(df_Cumulative['Date'])
 df_Cumulative_regions = df_Cumulative.copy()
