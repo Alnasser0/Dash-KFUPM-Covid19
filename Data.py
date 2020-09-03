@@ -58,7 +58,6 @@ df_Daily = df_Daily.loc[(df_Daily['Daily'] == 'Daily') & (df_Daily['region'] != 
 df_Daily['Date'] = pd.to_datetime(df_Daily['Date'])
 df_Daily_regions = df_Daily.copy()
 df_Daily = df_Daily.loc[df_Daily['region'] == 'Eastern Region']
-df_Daily
 
 #Clean Cumulative Data
 df_Cumulative = df.rename(columns = {"Region":"region"})
@@ -115,10 +114,10 @@ grouped_daily_cities_weekly['Cumulative Cases'] = (grouped_daily_cities_weekly['
 grouped_daily_regions_weekly['Cumulative Cases'] = (grouped_daily_regions_weekly['Cases']).groupby(grouped_daily_regions_weekly['region']).cumsum()
 
 #JSON Data Processing
-list = []
 f = open('SAU-geo.json') 
 file = json.load(f)
 
+list = []
 for k in range(len(file['features'])):
     tuble = (file['features'][k]['properties']['NAME_1'], file['features'][k]['properties']['id'])
     list.append(tuble)
