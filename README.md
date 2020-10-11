@@ -1,7 +1,25 @@
-# Dash-KFUPM-Covid19
+# KFUPM Covid-19 Dashboard
+
 Devolopment progress of KFUPM COVID19 Dashbaord. It is built using Dash, which is a Python framework for building analytical web applications.
 
-In Development (contribution is appreciated):
+## Setup
+
+The project is developed using python **3.7.x**. It is highly recommended that you use [Anaconda](https://www.anaconda.com/products/individual#Downloads) for managing python environments. Below is a guide on how to setup this project locally using anaconda.
+
+First, clone this project and navigate to the folder.
+
+Create a python environment for this project. An existing `environment.yml` file will set up all the required dependencies.
+
+```
+conda env create -f environment.yml
+```
+
+## Usage
+
+to be filled
+
+### In Development (contribution is appreciated):
+
 - Data Download Automation (Scheduling) - Done (Part of it in Heroku)
 - Codes Optimization - Done
 - UI improvements - Done
@@ -9,7 +27,8 @@ In Development (contribution is appreciated):
 - Add a table of data - Done
 - Develop a PWA for phones - Not feasible
 
-UI Improvements:
+### UI Improvements:
+
 - Add a NavBar - Done
 - Add the sliders to the DOC - Done
 - Add a summary region with x by y px boxes - Done
@@ -17,7 +36,8 @@ UI Improvements:
 - Add a footer - Done
 - Organize stuff in the dashboard - Done
 
-Future Improvements to consider:
+### Future Improvements to consider:
+
 - Add Simulation done by KFUPM@COE COVID19 Team
 - Expand to All Saudi Arabia Regions and Cities
 - Make UI more rebust, organized, and mobile friendly.
