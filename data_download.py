@@ -1,3 +1,4 @@
+Hide import os
 import time
 import json
 import requests
@@ -9,13 +10,19 @@ from models.city import City
 from models.region import Region
 from models.total import Total
 
+from dotenv import load_dotenv
 from pymongo import MongoClient
 
+load_dotenv()
+
+DB_NAME = os.getenv('DB_NAME')
+DB_USERNAME = os.getenv('DB_USERNAME')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 client = MongoClient(
-    "mongodb+srv://ajmal-ali:JTLrQEUoEn7VcSj3@covid19-kfupm.8orak.azure.mongodb.net/COVID19-KFUPM?retryWrites=true&w=majority"
+    f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@covid19-kfupm.8orak.azure.mongodb.net/{DB_NAME}?retryWrites=true&w=majority"
 )
-db = client['COVID19-KFUPM']
+db = client[DB_NAME]
 regions_collection = db['regions']
 cities_collection = db['cities']
 
