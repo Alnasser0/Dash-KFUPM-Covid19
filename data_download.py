@@ -29,18 +29,20 @@ cities_collection = db['cities']
 regions_collection.delete_many({})
 cities_collection.delete_many({})
 
+start = time.time()
 URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
 response = requests.get(URL)
 content = response.content
-
+print(f"Time taken (s) to download the file: {time.time() - start}")
 file_name = 'SA_data.csv'
 
+start = time.time()
 with open(file_name, 'wb') as csv_file:
     csv_file.write(content)
 
 # loading csv file
 all_data = pd.read_csv(file_name, sep=';',
-                       engine='c', encoding='utf-8')
+                       engine='c', dtype={'Daily / Cumulative': object, 'Indicator': object, 'Event': object, 'City': object, 'Region': object})
 
 # TODO: Check if required columns exists before parsing
 
@@ -49,11 +51,9 @@ all_data = all_data.rename(
     columns={'Cases (person)': 'Cases', 'Daily / Cumulative': 'D/C'}
 )
 # For daily, replace 'Cases' with 'New Cases'
-all_data.loc[(all_data['D/C'] == 'Daily') &
-             (all_data['Indicator'] == 'Cases'), 'Indicator'] = 'New Cases'
+all_data.loc[(all_data['D/C'] == 'Daily') & (all_data['Indicator'] == 'Cases'), 'Indicator'] = 'New Cases'
 # For cumulative, replace 'Cases' with 'Confirmed'
-all_data.loc[(all_data['D/C'] == 'Cumulative') &
-             (all_data['Indicator'] == 'Cases'), 'Indicator'] = 'Confirmed'
+all_data.loc[(all_data['D/C'] == 'Cumulative') & (all_data['Indicator'] == 'Cases'), 'Indicator'] = 'Confirmed'
 all_data = all_data.sort_values(by='Date')
 
 # Extract total data (all regions)
@@ -88,12 +88,10 @@ total.mortalities = total_cumulative_list[-1]['Mortalities']
 regions_collection.insert_one(total.__dict__)
 
 # Extract daily data
-df_daily = all_data[(all_data['D/C'] == 'Daily') &
-                    (all_data['Region'] != 'Total')]
+df_daily = all_data[(all_data['D/C'] == 'Daily') & (all_data['Region'] != 'Total')]
 
 # Extract cumulative data
-df_cumulative = all_data[(all_data['D/C'] == 'Cumulative')
-                         & (all_data['Region'] != 'Total')]
+df_cumulative = all_data[(all_data['D/C'] == 'Cumulative') & (all_data['Region'] != 'Total')]
 
 # Pivot region data
 df_regions_daily_pivoted = df_daily.pivot_table(
@@ -107,20 +105,22 @@ df_regions_cumulative_pivoted = df_cumulative.pivot_table(
 df_regions_cumulative_pivoted = df_regions_cumulative_pivoted.reset_index(
     level='Date')
 
+# Region - Cities
+df_regions_cities = df_cumulative.pivot_table(index=['Region', 'City']).reset_index(level='City')
+
 region_names = list(df_regions_daily_pivoted.index.unique(level=0))
 
 all_regions = []
 for region in region_names:
     r = Region(name=region)
     r.daily = df_regions_daily_pivoted.loc[region].to_dict('records')
-    region_cumulative = df_regions_cumulative_pivoted.loc[region].to_dict(
-        'records'
-    )
+    region_cumulative = df_regions_cumulative_pivoted.loc[region].to_dict('records')
     r.cumualtive = region_cumulative
     r.active = region_cumulative[-1]['Active']
     r.confirmed = region_cumulative[-1]['Confirmed']
     r.mortalities = region_cumulative[-1]['Mortalities']
     r.recoveries = region_cumulative[-1]['Recoveries']
+    r.cities = df_regions_cities.loc[region]['City'].tolist()
 
     all_regions.append(r.__dict__)
 
@@ -141,9 +141,7 @@ all_cities = []
 for city in city_names:
     c = City(name=city)
     c.daily = df_cities_daily_pivoted.loc[city].to_dict('records')
-    city_cumulative = df_cities_cumulative_pivoted.loc[city].to_dict(
-        'records'
-    )
+    city_cumulative = df_cities_cumulative_pivoted.loc[city].to_dict('records')
     c.cumualtive = city_cumulative
     c.active = city_cumulative[-1]['Active']
     c.confirmed = city_cumulative[-1]['Confirmed']
@@ -153,3 +151,4 @@ for city in city_names:
     all_cities.append(c.__dict__)
 
 cities_collection.insert_many(all_cities)
+print(f"Time taken (s) to insert all documents: {time.time()-start}")
