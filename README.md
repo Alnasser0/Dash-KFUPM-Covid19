@@ -14,6 +14,17 @@ Create a python environment for this project. An existing `environment.yml` file
 conda env create -f environment.yml
 ```
 
+Then create a `.env` file with following structure and fill the required information.
+
+```
+FLASK_APP=app
+FLASK_ENV=development
+
+DB_NAME=COVID19-KFUPM
+DB_USERNAME=<username>
+DB_PASSWORD=<password>
+```
+
 ## Usage
 
 to be filled
