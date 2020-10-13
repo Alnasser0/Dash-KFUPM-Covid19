@@ -24,3 +24,22 @@ cities_collection = db['cities']
 @app.route('/index')
 def index():
     return dumps(regions_collection.find())
+
+
+@app.route('/total')
+def get_total():
+    return dumps(regions_collection.find({
+        '_id': 'All Regions'
+    }))
+
+
+@app.route('/all-regions')
+def get_regions():
+    return dumps(regions_collection.find({
+        '_id': {'$ne': 'All Regions'}
+    }))
+
+
+@app.route('/all-cities')
+def get_cities():
+    return dumps(cities_collection.find())

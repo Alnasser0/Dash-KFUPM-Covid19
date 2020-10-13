@@ -33,6 +33,7 @@ start = time.time()
 URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
 response = requests.get(URL)
 content = response.content
+
 print(f"Time taken (s) to download the file: {time.time() - start}")
 file_name = 'SA_data.csv'
 
@@ -42,7 +43,7 @@ with open(file_name, 'wb') as csv_file:
 
 # loading csv file
 all_data = pd.read_csv(file_name, sep=';',
-                       engine='c', dtype={'Daily / Cumulative': object, 'Indicator': object, 'Event': object, 'City': object, 'Region': object})
+                       engine='c', encoding='utf-8', dtype={'Daily / Cumulative': object, 'Indicator': object, 'Event': object, 'City': object, 'Region': object})
 
 # TODO: Check if required columns exists before parsing
 
@@ -151,4 +152,5 @@ for city in city_names:
     all_cities.append(c.__dict__)
 
 cities_collection.insert_many(all_cities)
+
 print(f"Time taken (s) to insert all documents: {time.time()-start}")
