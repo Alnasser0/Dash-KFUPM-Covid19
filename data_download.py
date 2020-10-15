@@ -103,8 +103,7 @@ df_regions_daily_pivoted = df_regions_daily_pivoted.reset_index(level='Date')
 df_regions_cumulative_pivoted = df_cumulative.pivot_table(
     index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=False, aggfunc=np.sum
 )
-df_regions_cumulative_pivoted = df_regions_cumulative_pivoted.reset_index(
-    level='Date')
+df_regions_cumulative_pivoted = df_regions_cumulative_pivoted.reset_index(level='Date')
 
 # Region - Cities
 df_regions_cities = df_cumulative.pivot_table(index=['Region', 'City']).reset_index(level='City')
@@ -116,7 +115,7 @@ for region in region_names:
     r = Region(name=region)
     r.daily = df_regions_daily_pivoted.loc[region].to_dict('records')
     region_cumulative = df_regions_cumulative_pivoted.loc[region].to_dict('records')
-    r.cumualtive = region_cumulative
+    r.cumulative = region_cumulative
     r.active = region_cumulative[-1]['Active']
     r.confirmed = region_cumulative[-1]['Confirmed']
     r.mortalities = region_cumulative[-1]['Mortalities']
@@ -131,10 +130,12 @@ regions_collection.insert_many(all_regions)
 df_cities_daily_pivoted = df_daily.pivot_table(
     index=['City', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=False, aggfunc=np.sum
 )
+df_cities_daily_pivoted = df_cities_daily_pivoted.reset_index(level='Date')
 
 df_cities_cumulative_pivoted = df_cumulative.pivot_table(
     index=['City', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=False, aggfunc=np.sum
 )
+df_cities_cumulative_pivoted = df_cities_cumulative_pivoted.reset_index(level='Date')
 
 city_names = list(df_cities_daily_pivoted.index.unique(level=0))
 
@@ -143,7 +144,7 @@ for city in city_names:
     c = City(name=city)
     c.daily = df_cities_daily_pivoted.loc[city].to_dict('records')
     city_cumulative = df_cities_cumulative_pivoted.loc[city].to_dict('records')
-    c.cumualtive = city_cumulative
+    c.cumulative = city_cumulative
     c.active = city_cumulative[-1]['Active']
     c.confirmed = city_cumulative[-1]['Confirmed']
     c.mortalities = city_cumulative[-1]['Mortalities']
