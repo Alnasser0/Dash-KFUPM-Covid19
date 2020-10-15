@@ -12,6 +12,6 @@ class Region:
 
         # list of historical statistics
         self.daily = None
-        self.cumualtive = None
+        self.cumulative = None
 
         self.cities = None

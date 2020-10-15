@@ -13,4 +13,4 @@ class Total:
 
         # list of historical statistics
         self.daily = None
-        self.cumualtive = None
+        self.cumulative = None
