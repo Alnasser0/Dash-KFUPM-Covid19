@@ -28,9 +28,29 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/cork/bootstrap/css/bootstrap.min.css",
+              "src/cork/assets/css/plugins.css",
+              "src/cork/assets/css/scrollspyNav.css",
+              "src/cork/assets/css/components/cards/card.css",
+              "src/cork/assets/css/forms/theme-checkbox-radio.css",
+              "src/cork/assets/css/tables/table-basic.css",
+              "src/cork/plugins/select2/select2.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "src/cork/bootstrap/js/popper.min.js",
+              "src/cork/bootstrap/js/bootstrap.min.js",
+              "src/cork/plugins/perfect-scrollbar/perfect-scrollbar.min.js",
+              "src/cork/plugins/blockui/jquery.blockUI.min.js",
+              "src/cork/assets/js/app.js",
+              "src/cork/assets/js/init.js",
+              "src/cork/plugins/highlight/highlight.pack.js",
+              "src/cork/assets/js/custom.js",
+              "src/cork/assets/js/scrollspyNav.js",
+              "node_modules/select2/dist/js/select2.min.js",
+              "src/cork/plugins/select2/custom-select2.js"
+            ]
           },
           "configurations": {
             "production": {

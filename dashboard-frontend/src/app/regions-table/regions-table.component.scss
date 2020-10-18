@@ -1,0 +1,26 @@
+table.table td {
+  font-size: 1.05em !important;
+}
+
+table {
+  width: 100%;
+}
+
+thead,
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  cursor: pointer;
+}
+
+tbody {
+  display: block;
+  overflow-y: auto;
+  table-layout: fixed;
+  max-height: 500px;
+}
+
+tbody::-webkit-scrollbar {
+  display: none;
+}

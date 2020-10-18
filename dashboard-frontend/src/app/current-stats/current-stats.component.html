@@ -1,0 +1,55 @@
+<section class="my-4 row">
+  <!-- CONFIRMED -->
+  <article class="col-sm-12 col-md-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Confirmed</h5>
+        <div *ngIf="total">
+          <p class="card-text statistic" [countUp]="total.confirmed"></p>
+          <p class="card-text text-info">{{ total.tested | number }} tested</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ACTIVE -->
+  <article class="col-sm-12 col-md-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Active</h5>
+        <div *ngIf="total">
+          <p class="card-text statistic" [countUp]="total.active"></p>
+          <p class="card-text text-danger">{{ total.critical | number }} in critical condition</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- RECOVERED -->
+  <article class="col-sm-12 col-md-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Recovered</h5>
+        <div *ngIf="total">
+          <p class="card-text statistic" [countUp]="total.recoveries"></p>
+          <p class="card-text text-success">{{  (total.recoveries/total.confirmed)*100 | number: '1.0-2'}}% recoverd</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- DECEASED -->
+  <article class="col-sm-12 col-md-6 col-lg-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Deceased</h5>
+        <div *ngIf="total">
+          <p class="card-text statistic" [countUp]="total.mortalities"></p>
+          <p class="card-text text-warning">{{ (total.mortalities/total.confirmed)*100 | number: '1.0-2' }}% deceased
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</section>

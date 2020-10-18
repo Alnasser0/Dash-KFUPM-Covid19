@@ -43,7 +43,8 @@ with open(file_name, 'wb') as csv_file:
 
 # loading csv file
 all_data = pd.read_csv(file_name, sep=';',
-                       engine='c', encoding='utf-8', dtype={'Daily / Cumulative': object, 'Indicator': object, 'Event': object, 'City': object, 'Region': object})
+                       engine='c', encoding='utf-8',
+                       dtype={'Daily / Cumulative': object, 'Indicator': object, 'Event': object, 'City': object, 'Region': object})
 
 # TODO: Check if required columns exists before parsing
 
@@ -96,14 +97,16 @@ df_cumulative = all_data[(all_data['D/C'] == 'Cumulative') & (all_data['Region']
 
 # Pivot region data
 df_regions_daily_pivoted = df_daily.pivot_table(
-    index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=False, aggfunc=np.sum
+    index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=True, aggfunc=np.sum
 )
+
 df_regions_daily_pivoted = df_regions_daily_pivoted.reset_index(level='Date')
 
 df_regions_cumulative_pivoted = df_cumulative.pivot_table(
-    index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=False, aggfunc=np.sum
+    index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=True, aggfunc=np.sum
 )
 df_regions_cumulative_pivoted = df_regions_cumulative_pivoted.reset_index(level='Date')
+
 
 # Region - Cities
 df_regions_cities = df_cumulative.pivot_table(index=['Region', 'City']).reset_index(level='City')
@@ -128,12 +131,12 @@ regions_collection.insert_many(all_regions)
 
 # Pivot city data
 df_cities_daily_pivoted = df_daily.pivot_table(
-    index=['City', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=False, aggfunc=np.sum
+    index=['City', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=True, aggfunc=np.sum
 )
 df_cities_daily_pivoted = df_cities_daily_pivoted.reset_index(level='Date')
 
 df_cities_cumulative_pivoted = df_cumulative.pivot_table(
-    index=['City', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=False, aggfunc=np.sum
+    index=['City', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=True, aggfunc=np.sum
 )
 df_cities_cumulative_pivoted = df_cities_cumulative_pivoted.reset_index(level='Date')
 

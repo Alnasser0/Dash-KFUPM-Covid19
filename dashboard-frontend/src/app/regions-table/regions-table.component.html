@@ -1,0 +1,46 @@
+<div class="card">
+
+  <!-- Loading template -->
+  <ng-template #loadingBlock class="p-2">
+    <div class="spinner-border text-primary my-3 align-self-center"></div>
+    <p class="text-center pt-1">Fetching data...</p>
+  </ng-template>
+
+  <div class="card-body" *ngIf="(isCitiesLoaded && isRegionsLoaded); else loadingBlock">
+
+    <div class="form-group">
+      <!-- REGIONS DROPDOWN -->
+      <section class="mb-3">
+        <label for="region-select">Region</label>
+        <ng-select2 [data]="regionNames" [placeholder]="'Select a region...'" [value]="defaultRegion"
+          [(ngModel)]="selectedRegion" (ngModelChange)="updateCities()">
+        </ng-select2>
+      </section>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover mb-0">
+        <thead>
+          <tr>
+            <th>City</th>
+            <th>Confirmed</th>
+            <th>Active</th>
+            <th>Recovered</th>
+            <th>Deceased</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let city of selectedCities">
+            <td [class.text-success]="city.active === 0">{{ city.name }}</td>
+            <td>{{ city.confirmed | number}}</td>
+            <td>{{ city.active | number }}</td>
+            <td>{{ city.recoveries | number }}</td>
+            <td>{{ city.mortalities | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

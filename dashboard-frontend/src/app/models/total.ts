@@ -1,10 +1,10 @@
 export class Total {
-  confirmed: string;
-  active: string;
-  recoveries: string;
-  mortalities: string;
-  critical: string;
-  tested: string;
+  confirmed: number;
+  active: number;
+  recoveries: number;
+  mortalities: number;
+  critical: number;
+  tested: number;
 
   daily: [];
   cumulative: [];
