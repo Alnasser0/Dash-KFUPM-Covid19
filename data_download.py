@@ -79,7 +79,7 @@ df_total_cumulative = df_total_cumulative.reset_index().rename_axis(None, axis=1
 total = Total(id='All Regions')
 total.daily = df_total_daily.to_dict('records')
 total_cumulative_list = df_total_cumulative.to_dict('records')
-total.cumualtive = total_cumulative_list
+total.cumulative = total_cumulative_list
 total.confirmed = total_cumulative_list[-1]['Confirmed']
 total.active = total_cumulative_list[-1]['Active']
 total.tested = total_cumulative_list[-1]['Tested']
