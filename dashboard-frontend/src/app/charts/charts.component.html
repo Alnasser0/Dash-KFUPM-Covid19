@@ -1,1 +1,47 @@
-<p>charts works!</p>
+<!-- TOTAL GRAPHS -->
+<section *ngIf="showTotal">
+  <h4>Spread trends in All Regions</h4>
+
+
+</section>
+
+<!-- REGION GRAPHS -->
+<section *ngIf="!showTotal">
+  <h4 class="my-3">Spread trends in {{ region.name }}</h4>
+
+  <div class="row">
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeConfirmed"
+      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="confirmedChartOptions">
+    </canvas>
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeActive"
+      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="activeChartOptions">
+    </canvas>
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeRecovered"
+      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="recoveriesChartOptions">
+    </canvas>
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeMortalities"
+      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="mortalitiesChartOptions">
+    </canvas>
+  </div>
+
+</section>
+
+<!-- CITY GRAPHS -->
+<section class="my-3">
+  <h4 class="my-3">{{ city.name }}</h4>
+  <div class="row">
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeConfirmed"
+      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="confirmedChartOptions">
+    </canvas>
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeActive"
+      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="activeChartOptions">
+    </canvas>
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeRecovered"
+      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="recoveriesChartOptions">
+    </canvas>
+    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeMortalities"
+      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="mortalitiesChartOptions">
+    </canvas>
+  </div>
+
+</section>

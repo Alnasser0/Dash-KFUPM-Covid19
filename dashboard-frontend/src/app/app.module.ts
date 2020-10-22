@@ -12,6 +12,7 @@ import { ChartsComponent } from './charts/charts.component';
 
 import { CountUpModule } from 'ngx-countup';
 import { NgSelect2Module } from 'ng-select2';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { NgSelect2Module } from 'ng-select2';
     HttpClientModule,
     FormsModule,
     CountUpModule,
-    NgSelect2Module
+    NgSelect2Module,
+    ChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -17,7 +17,7 @@ export class CurrentStatsComponent implements OnInit {
   constructor(private covidDataService: CovidDataService) { }
 
   ngOnInit(): void {
-    // this.getTotal();
+    this.getTotal();
   }
 
   // TODO: Update changes

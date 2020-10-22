@@ -26,9 +26,6 @@ db = client[DB_NAME]
 regions_collection = db['regions']
 cities_collection = db['cities']
 
-regions_collection.delete_many({})
-cities_collection.delete_many({})
-
 start = time.time()
 URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
 response = requests.get(URL)
@@ -87,8 +84,6 @@ total.critical = total_cumulative_list[-1]['Critical']
 total.recoveries = total_cumulative_list[-1]['Recoveries']
 total.mortalities = total_cumulative_list[-1]['Mortalities']
 
-regions_collection.insert_one(total.__dict__)
-
 # Extract daily data
 df_daily = all_data[(all_data['D/C'] == 'Daily') & (all_data['Region'] != 'Total')]
 
@@ -106,7 +101,6 @@ df_regions_cumulative_pivoted = df_cumulative.pivot_table(
     index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=True, aggfunc=np.sum
 )
 df_regions_cumulative_pivoted = df_regions_cumulative_pivoted.reset_index(level='Date')
-
 
 # Region - Cities
 df_regions_cities = df_cumulative.pivot_table(index=['Region', 'City']).reset_index(level='City')
@@ -126,8 +120,6 @@ for region in region_names:
     r.cities = df_regions_cities.loc[region]['City'].tolist()
 
     all_regions.append(r.__dict__)
-
-regions_collection.insert_many(all_regions)
 
 # Pivot city data
 df_cities_daily_pivoted = df_daily.pivot_table(
@@ -155,6 +147,13 @@ for city in city_names:
 
     all_cities.append(c.__dict__)
 
+
+# Insert Data
+regions_collection.delete_many({})
+cities_collection.delete_many({})
+
+regions_collection.insert_one(total.__dict__)
+regions_collection.insert_many(all_regions)
 cities_collection.insert_many(all_cities)
 
 print(f"Time taken (s) to insert all documents: {time.time()-start}")
