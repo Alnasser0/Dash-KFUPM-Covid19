@@ -53,6 +53,6 @@ def get_cities():
     return dumps(cities_collection.find())
 
 
-@app.errorhandler(500)
+@app.errorhandler(503)
 def internal_error(error):
     return "Something went wrong. Contact the administrator."
