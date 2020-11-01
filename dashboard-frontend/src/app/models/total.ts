@@ -6,6 +6,6 @@ export class Total {
   critical: number;
   tested: number;
 
-  daily: [];
-  cumulative: [];
+  daily: [] = [];
+  cumulative: [] = [];
 }
