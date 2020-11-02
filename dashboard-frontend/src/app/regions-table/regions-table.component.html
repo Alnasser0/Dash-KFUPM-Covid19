@@ -24,7 +24,7 @@
           <tr *ngFor="let region of regions">
             <td>{{ region.name }}</td>
             <td>{{ region.confirmed | number}}</td>
-            <td>{{ region.active | number }}</td>
+            <td>{{ region.active | number }} {{ region.getActiveChange() | number }}</td>
             <td>{{ region.recoveries | number }}</td>
             <td>{{ region.mortalities | number }}</td>
           </tr>

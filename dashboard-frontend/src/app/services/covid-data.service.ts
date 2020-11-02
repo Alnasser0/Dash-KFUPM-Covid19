@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Total } from '../models/total';
 import { environment } from 'src/environments/environment';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, pipe } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Region } from '../models/region';
 import { City } from '../models/city';
 
@@ -27,9 +28,21 @@ export class CovidDataService {
   }
 
   getTotal(): void {
-    this.http.get<Total>(`${baseURL}/total`).subscribe(total =>
-      this._total.next(total[0])
-    );
+    this.http.get<Total>(`${baseURL}/total`).pipe(
+      map(total => new Total(
+        total[0].confirmed,
+        total[0].active,
+        total[0].recoveries,
+        total[0].mortalities,
+        total[0].critical,
+        total[0].tested,
+        total[0].daily,
+        total[0].cumulative)
+      )
+    ).subscribe(total => {
+      this._total.next(total);
+      console.log(total);
+    });
   }
 
   getRegions(): void {

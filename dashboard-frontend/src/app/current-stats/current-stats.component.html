@@ -8,7 +8,7 @@
           <div class="d-flex">
             <p class="card-text statistic" [countUp]="total.confirmed" [options]="changesOptions"
               [reanimateOnClick]="false"></p>
-            <span class="text-info changes ml-2 my-auto"> +{{ newCases }}</span>
+            <span class="text-info changes ml-2 my-auto"> +{{ total.getConfirmedChange() | number }}</span>
           </div>
           <p class="card-text text-info">{{ total.tested | number }} tested</p>
         </div>
@@ -25,7 +25,7 @@
           <div class="d-flex">
             <p class="card-text statistic" [countUp]="total.active" [reanimateOnClick]="false"></p>
             <span class="text-danger changes ml-2 my-auto"><span
-                *ngIf="activeChange > 0">+</span>{{ activeChange }}</span>
+                *ngIf="total.getActiveChange() > 0">+</span>{{ total.getActiveChange() | number }}</span>
           </div>
           <p class="card-text text-danger">{{ total.critical | number }} in critical condition</p>
         </div>
@@ -41,7 +41,7 @@
         <div *ngIf="total">
           <div class="d-flex">
             <p class="card-text statistic" [countUp]="total.recoveries" [reanimateOnClick]="false"></p>
-            <span class="text-success changes ml-2 my-auto"> +{{ newRecoveries }}</span>
+            <span class="text-success changes ml-2 my-auto"> +{{ total.getRecoveriesChange() | number }}</span>
           </div>
 
           <p class="card-text text-success">{{  (total.recoveries/total.confirmed)*100 | number: '1.0-2'}}% recoverd</p>
@@ -58,7 +58,7 @@
         <div *ngIf="total">
           <div class="d-flex">
             <p class="card-text statistic" [countUp]="total.mortalities" [reanimateOnClick]="false"></p>
-            <span class="text-warning changes ml-2 my-auto"> +{{ newDeaths }}</span>
+            <span class="text-warning changes ml-2 my-auto"> +{{ total.getMortalitiesChange()| number }}</span>
           </div>
 
           <p class="card-text text-warning">{{ (total.mortalities/total.confirmed)*100 | number: '1.0-2' }}% deceased
