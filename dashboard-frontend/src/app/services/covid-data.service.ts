@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Total } from '../models/total';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { Region } from '../models/region';
 import { City } from '../models/city';
 
@@ -12,24 +12,33 @@ const baseURL = environment.baseURL;
   providedIn: 'root'
 })
 export class CovidDataService {
-  total: Total;
-  regions: Region[] = [];
-  cities: City[] = [];
 
-  selectedRegion: Region;
-  selectedCity: City;
+  private _regions: BehaviorSubject<Region[]> = new BehaviorSubject<Region[]>([]);
+  private _cities: BehaviorSubject<City[]> = new BehaviorSubject<City[]>([]);
+  private _total: BehaviorSubject<Total> = new BehaviorSubject<Total>(null);
 
-  constructor(private http: HttpClient) { }
+  public readonly regions = this._regions.asObservable();
+  public readonly cities = this._cities.asObservable();
+  public readonly total = this._total.asObservable();
 
-  getTotal(): Observable<Total> {
-    return this.http.get<Total>(`${baseURL}/total`);
+  constructor(private http: HttpClient) {
+    this.getTotal();
+    this.getRegions();
   }
 
-  getAllRegions(): Observable<Region[]> {
-    return this.http.get<Region[]>(`${baseURL}/all-regions`);
+  getTotal(): void {
+    this.http.get<Total>(`${baseURL}/total`).subscribe(total =>
+      this._total.next(total[0])
+    );
   }
 
-  getAllCities(): Observable<City[]> {
+  getRegions(): void {
+    this.http.get<Region[]>(`${baseURL}/all-regions`).subscribe(regions =>
+      this._regions.next(regions)
+    );
+  }
+
+  getCities(): Observable<City[]> {
     return this.http.get<City[]>(`${baseURL}/all-cities`);
   }
 

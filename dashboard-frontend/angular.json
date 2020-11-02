@@ -43,11 +43,11 @@
               "src/cork/bootstrap/js/bootstrap.min.js",
               "src/cork/plugins/perfect-scrollbar/perfect-scrollbar.min.js",
               "src/cork/plugins/blockui/jquery.blockUI.min.js",
+              "src/cork/assets/js/scrollspyNav.js",
               "src/cork/assets/js/app.js",
               "src/cork/assets/js/init.js",
               "src/cork/plugins/highlight/highlight.pack.js",
               "src/cork/assets/js/custom.js",
-              "src/cork/assets/js/scrollspyNav.js",
               "node_modules/select2/dist/js/select2.min.js",
               "src/cork/plugins/select2/custom-select2.js"
             ]

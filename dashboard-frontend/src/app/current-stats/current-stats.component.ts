@@ -24,16 +24,18 @@ export class CurrentStatsComponent implements OnInit {
   }
 
   getTotal(): void {
-    this.covidDataService.getTotal().subscribe((total: Total) => {
-      this.total = total[0];
+    this.covidDataService.total.subscribe(total => {
+      if (total) {
+        this.total = total;
 
-      const latest = this.total.cumulative[this.total.cumulative.length - 1];
-      const secondLatest = this.total.cumulative[this.total.cumulative.length - 2];
+        const latest = this.total.cumulative[this.total.cumulative.length - 1];
+        const secondLatest = this.total.cumulative[this.total.cumulative.length - 2];
 
-      this.newCases = latest['Confirmed'] - secondLatest['Confirmed'];
-      this.newRecoveries = latest['Recoveries'] - secondLatest['Recoveries'];
-      this.newDeaths = latest['Mortalities'] - secondLatest['Mortalities'];
-      this.activeChange = latest['Active'] - secondLatest['Active'];
+        this.newCases = latest['Confirmed'] - secondLatest['Confirmed'];
+        this.newRecoveries = latest['Recoveries'] - secondLatest['Recoveries'];
+        this.newDeaths = latest['Mortalities'] - secondLatest['Mortalities'];
+        this.activeChange = latest['Active'] - secondLatest['Active'];
+      }
     });
   }
 
