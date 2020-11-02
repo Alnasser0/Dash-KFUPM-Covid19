@@ -7,11 +7,13 @@
 
 <app-current-stats></app-current-stats>
 
-<app-regions-table (selectCityEvent)="selectCity($event)" (selectRegionEvent)="selectRegion($event)"
-  (selectTotalEvent)="selectTotal($event)" (showTotalEvent)="showTotalFlag($event)">
-</app-regions-table>
-
-<section class="mt-3">
-  <app-charts *ngIf="selectedRegion" [region]="selectedRegion" [city]="selectedCity" [total]="total"
-    [showTotal]="showTotal"></app-charts>
-</section>
+<div class="row">
+  <app-regions-table (selectCityEvent)="selectCity($event)" (selectRegionEvent)="selectRegion($event)"
+    (selectTotalEvent)="selectTotal($event)" (showTotalEvent)="showTotalFlag($event)"
+    class="col-sm-12 col-md-12 col-lg-6">
+  </app-regions-table>
+  <section class="mt-3">
+    <app-charts *ngIf="selectedRegion" [region]="selectedRegion" [city]="selectedCity" [total]="total"
+      [showTotal]="showTotal" class="col-lg-6"></app-charts>
+  </section>
+</div>

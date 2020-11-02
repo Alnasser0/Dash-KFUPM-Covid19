@@ -24,8 +24,8 @@
         <div *ngIf="total">
           <div class="d-flex">
             <p class="card-text statistic" [countUp]="total.active" [reanimateOnClick]="false"></p>
-            <span class="text-danger changes ml-2 my-auto"><span *ngIf="activeChange > 0">+</span>
-              {{ activeChange }}</span>
+            <span class="text-danger changes ml-2 my-auto"><span
+                *ngIf="activeChange > 0">+</span>{{ activeChange }}</span>
           </div>
           <p class="card-text text-danger">{{ total.critical | number }} in critical condition</p>
         </div>

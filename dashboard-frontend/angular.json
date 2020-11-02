@@ -28,8 +28,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
               "src/cork/bootstrap/css/bootstrap.min.css",
+              "src/styles.scss",
               "src/cork/assets/css/plugins.css",
               "src/cork/assets/css/scrollspyNav.css",
               "src/cork/assets/css/components/cards/card.css",

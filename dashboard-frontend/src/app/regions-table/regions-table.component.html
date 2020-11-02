@@ -31,12 +31,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let city of selectedCities" (click)="selectCity(city)">
+          <!-- <tr *ngFor="let city of selectedCities" (click)="selectCity(city)">
             <td [class.text-success]="city.active === 0">{{ city.name }}</td>
             <td>{{ city.confirmed | number}}</td>
             <td>{{ city.active | number }}</td>
             <td>{{ city.recoveries | number }}</td>
             <td>{{ city.mortalities | number }}</td>
+          </tr> -->
+          <tr *ngFor="let city of allRegions | keyvalue">
+            <td>{{ city.key }}</td>
+            <!-- <td [class.text-success]="city.active === 0">{{ city.name }}</td>
+            <td>{{ city.confirmed | number}}</td>
+            <td>{{ city.active | number }}</td>
+            <td>{{ city.recoveries | number }}</td>
+            <td>{{ city.mortalities | number }}</td> -->
           </tr>
         </tbody>
       </table>

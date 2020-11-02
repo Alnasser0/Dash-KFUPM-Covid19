@@ -23,7 +23,6 @@ export class CurrentStatsComponent implements OnInit {
     this.getTotal();
   }
 
-  // TODO: Update changes
   getTotal(): void {
     this.covidDataService.getTotal().subscribe((total: Total) => {
       this.total = total[0];
