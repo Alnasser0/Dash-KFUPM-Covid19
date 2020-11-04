@@ -37,18 +37,27 @@ export class CovidDataService {
         total[0].critical,
         total[0].tested,
         total[0].daily,
-        total[0].cumulative)
-      )
+        total[0].cumulative
+      ))
     ).subscribe(total => {
       this._total.next(total);
-      console.log(total);
     });
   }
 
   getRegions(): void {
-    this.http.get<Region[]>(`${baseURL}/all-regions`).subscribe(regions =>
-      this._regions.next(regions)
-    );
+    this.http.get<Region[]>(`${baseURL}/all-regions`).subscribe(regions => {
+      regions = regions.map(region => new Region(
+        region.name,
+        region.confirmed,
+        region.active,
+        region.recoveries,
+        region.mortalities,
+        region.daily,
+        region.cumulative,
+        region.cities
+      ));
+      this._regions.next(regions);
+    });
   }
 
   getCities(): Observable<City[]> {

@@ -6,7 +6,7 @@
     <p class="text-center pt-1">Fetching data...</p>
   </ng-template>
 
-  <div class="card-body" *ngIf="(isRegionsLoaded); else loadingBlock">
+  <div class="card-body" *ngIf="isRegionsLoaded; else loadingBlock">
 
     <!-- TABLE -->
     <div class="table-responsive">
@@ -23,10 +23,10 @@
         <tbody>
           <tr *ngFor="let region of regions">
             <td>{{ region.name }}</td>
-            <td>{{ region.confirmed | number}}</td>
-            <td>{{ region.active | number }} {{ region.getActiveChange() | number }}</td>
-            <td>{{ region.recoveries | number }}</td>
-            <td>{{ region.mortalities | number }}</td>
+            <td [countUp]="region.confirmed" [reanimateOnClick]="false"></td>
+            <td [countUp]="region.active" [reanimateOnClick]="false"></td>
+            <td [countUp]="region.recoveries" [reanimateOnClick]="false"></td>
+            <td [countUp]="region.mortalities" [reanimateOnClick]="false"></td>
           </tr>
         </tbody>
       </table>

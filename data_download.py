@@ -34,7 +34,7 @@ try:
     response = requests.get(URL)
     content = response.content
 
-    # print(f"Time taken (s) to download the file: {time.time() - start}")
+    print(f"Time taken (s) to download the file: {time.time() - start}")
 
     file_name = 'SA_data.csv'
 
@@ -108,7 +108,7 @@ try:
     df_regions_daily_pivoted = df_regions_daily_pivoted.reset_index(level='Date')
     df_regions_daily_pivoted['Date'] = df_regions_daily_pivoted['Date'].dt.strftime('%Y-%m-%d')
 
-    # Region - Cities
+    # Region - Cities (list of cites per region)
     df_regions_cities = df_cumulative.pivot_table(index=['Region', 'City']).reset_index(level='City')
 
     region_names = list(df_regions_daily_pivoted.index.unique(level=0))

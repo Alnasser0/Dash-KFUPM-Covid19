@@ -1,47 +1,98 @@
-<!-- TOTAL GRAPHS -->
-<section *ngIf="showTotal">
-  <h4>Spread trends in All Regions</h4>
-
-
-</section>
-
 <!-- REGION GRAPHS -->
-<section *ngIf="!showTotal">
-  <h4 class="my-3">Spread trends in {{ region.name }}</h4>
+<section *ngIf="regions">
+  <h4 class="my-2 text-center">Spread Trends</h4>
 
-  <div class="row">
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeConfirmed"
-      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="confirmedChartOptions">
-    </canvas>
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeActive"
-      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="activeChartOptions">
-    </canvas>
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeRecovered"
-      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="recoveriesChartOptions">
-    </canvas>
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="regionCumulativeMortalities"
-      [labels]="regionCumulativeLabels" [chartType]="lineChartType" [options]="mortalitiesChartOptions">
-    </canvas>
+  <div class="form-group">
+    <!-- REGIONS DROPDOWN -->
+    <section class="my-4 d-flex justify-content-between">
+      <div class="w-50">
+        <ng-select2 [data]="regionNames" [placeholder]="'Select a region...'" [value]="defaultRegion"
+          [(ngModel)]="selectedRegion" (ngModelChange)="updateCharts()">
+        </ng-select2>
+      </div>
+
+      <ul class="nav nav-pills my-auto justify-content-end" id="justify-center-pills-tab" role="tablist">
+        <li class="nav-item display-mode">
+          <a class="nav-link" data-toggle="pill" role="tab" (click)="changeDisplayMode('daily')">Daily</a>
+        </li>
+        <li class="nav-item display-mode">
+          <a class="nav-link active" data-toggle="pill" role="tab"
+            (click)="changeDisplayMode('cumulative')">Cumulative</a>
+        </li>
+        <li class="nav-item display-mode">
+          <a class="nav-link" data-toggle="pill" role="tab" (click)="changeDisplayMode('log')">Logarithmic</a>
+        </li>
+      </ul>
+    </section>
   </div>
 
-</section>
-
-<!-- CITY GRAPHS -->
-<section class="my-3">
-  <h4 class="my-3">{{ city.name }}</h4>
+  <!--  LINE CHARTS -->
   <div class="row">
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeConfirmed"
-      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="confirmedChartOptions">
-    </canvas>
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeActive"
-      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="activeChartOptions">
-    </canvas>
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeRecovered"
-      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="recoveriesChartOptions">
-    </canvas>
-    <canvas baseChart class="col-sm-12 col-md-12 col-lg-6 p-2" [datasets]="cityCumulativeMortalities"
-      [labels]="cityCumulativeLabels" [chartType]="lineChartType" [options]="mortalitiesChartOptions">
-    </canvas>
-  </div>
+    <article class="col-sm-12 col-md-12 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-1">Confirmed</h5>
+          <canvas *ngIf="!isRefreshing" baseChart [datasets]="confirmedLineChartData" [labels]="cumulativeLabels"
+            [chartType]="lineChartType" [options]="cumulativeOptions">
+          </canvas>
+        </div>
+      </div>
+    </article>
 
+    <article class="col-sm-12 col-md-12 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-1">Active</h5>
+          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="activeLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+          </canvas>
+        </div>
+      </div>
+    </article>
+
+    <article class="col-sm-12 col-md-12 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-1">Recovered</h5>
+          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="recoveredLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+          </canvas>
+        </div>
+      </div>
+    </article>
+
+    <article class="col-sm-12 col-md-12 col-lg-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-1">Deceased</h5>
+          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="deceasedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+          </canvas>
+        </div>
+      </div>
+    </article>
+
+    <article class="col-sm-12 col-md-12 col-lg-6" *ngIf="selectedRegion === 'Saudi Arabia'">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-1">Tested</h5>
+          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="testedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+          </canvas>
+        </div>
+      </div>
+    </article>
+
+    <article class="col-sm-12 col-md-12 col-lg-6" *ngIf="selectedRegion === 'Saudi Arabia'">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-1">Critical</h5>
+          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="criticalLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+          </canvas>
+        </div>
+      </div>
+    </article>
+
+  </div>
 </section>
