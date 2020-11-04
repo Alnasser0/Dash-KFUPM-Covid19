@@ -30,22 +30,24 @@ try:
     cities_collection = db['cities']
 
     start = time.time()
-    URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
-    response = requests.get(URL)
-    content = response.content
+    # URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
+    # response = requests.get(URL)
+    # content = response.content
 
-    print(f"Time taken (s) to download the file: {time.time() - start}")
+    # print(f"Time taken (s) to download the file: {time.time() - start}")
 
     file_name = 'SA_data.csv'
 
-    start = time.time()
-    with open(file_name, 'w+b') as csv_file:
-        csv_file.write(content)
+    # start = time.time()
+    # with open(file_name, 'w+b') as csv_file:
+    #     csv_file.write(content)
 
     # loading csv file
     all_data = pd.read_csv(file_name, sep=';',
                            engine='c', encoding='utf-8',
-                           dtype={'Daily / Cumulative': object, 'Indicator': object, 'Event': object, 'City': object, 'Region': object})
+                           dtype={'Daily / Cumulative': object, 'Indicator': object,
+                                  'Event': object, 'City': object, 'Region': object},
+                           parse_dates=['Date'])
 
     # TODO: Check if required columns exists before parsing
 
@@ -62,6 +64,7 @@ try:
     # Extract total data (all regions)
     df_total = all_data[all_data['Region'] == 'Total']
     df_total = df_total.drop(columns=['Region', 'City'])
+    df_total['Date'] = df_total['Date'].dt.strftime('%Y-%m-%d')
 
     # Total daily
     df_total_daily = df_total[df_total['D/C'] == 'Daily'].pivot(
@@ -99,12 +102,11 @@ try:
         index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=True, aggfunc=np.sum
     )
 
-    df_regions_daily_pivoted = df_regions_daily_pivoted.reset_index(level='Date')
+    df_regions_cumulative_pivoted = df_regions_daily_pivoted.copy()
 
-    df_regions_cumulative_pivoted = df_cumulative.pivot_table(
-        index=['Region', 'Date'], columns='Indicator', values='Cases', fill_value=0, dropna=True, aggfunc=np.sum
-    )
-    df_regions_cumulative_pivoted = df_regions_cumulative_pivoted.reset_index(level='Date')
+    # Convert back to YYYY-MM-DD
+    df_regions_daily_pivoted = df_regions_daily_pivoted.reset_index(level='Date')
+    df_regions_daily_pivoted['Date'] = df_regions_daily_pivoted['Date'].dt.strftime('%Y-%m-%d')
 
     # Region - Cities
     df_regions_cities = df_cumulative.pivot_table(index=['Region', 'City']).reset_index(level='City')
@@ -115,7 +117,27 @@ try:
     for region in region_names:
         r = Region(name=region)
         r.daily = df_regions_daily_pivoted.loc[region].to_dict('records')
-        region_cumulative = df_regions_cumulative_pivoted.loc[region].to_dict('records')
+
+        # Fill date gaps
+        new_date_range = pd.date_range(
+            start=df_regions_cumulative_pivoted.loc[region].index.min(),
+            end=df_regions_cumulative_pivoted.loc[region].index.max()
+        )
+
+        df_updated_region_cumulative = df_regions_cumulative_pivoted.loc[region].reindex(new_date_range, fill_value=0)
+        df_updated_region_cumulative = df_updated_region_cumulative.rename(columns={'New Cases': "Confirmed"})
+        df_updated_region_cumulative = df_updated_region_cumulative.cumsum()
+
+        # Add Active column
+        df_updated_region_cumulative['Active'] = df_updated_region_cumulative['Confirmed'] - \
+            df_updated_region_cumulative['Recoveries'] - df_updated_region_cumulative['Mortalities']
+
+        df_updated_region_cumulative = df_updated_region_cumulative.reset_index().rename(columns={'index': 'Date'})
+
+        # Convert back to YYY-MM-DD
+        df_updated_region_cumulative['Date'] = df_updated_region_cumulative['Date'].dt.strftime('%Y-%m-%d')
+        region_cumulative = df_updated_region_cumulative.to_dict('records')
+
         r.cumulative = region_cumulative
         r.active = region_cumulative[-1]['Active']
         r.confirmed = region_cumulative[-1]['Confirmed']
@@ -151,10 +173,11 @@ try:
 
         all_cities.append(c.__dict__)
 
-    is_data_parsed = True
+    # is_data_parsed = True
 
-except Exception:
+except Exception as e:
     is_data_parsed = False
+    print(e)
 
 
 if is_data_parsed:
