@@ -30,17 +30,17 @@ try:
     cities_collection = db['cities']
 
     start = time.time()
-    # URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
-    # response = requests.get(URL)
-    # content = response.content
+    URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
+    response = requests.get(URL)
+    content = response.content
 
     # print(f"Time taken (s) to download the file: {time.time() - start}")
 
     file_name = 'SA_data.csv'
 
-    # start = time.time()
-    # with open(file_name, 'w+b') as csv_file:
-    #     csv_file.write(content)
+    start = time.time()
+    with open(file_name, 'w+b') as csv_file:
+        csv_file.write(content)
 
     # loading csv file
     all_data = pd.read_csv(file_name, sep=';',
@@ -173,7 +173,7 @@ try:
 
         all_cities.append(c.__dict__)
 
-    # is_data_parsed = True
+    is_data_parsed = True
 
 except Exception as e:
     is_data_parsed = False
