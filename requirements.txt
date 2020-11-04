@@ -29,6 +29,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 kiwisolver==1.2.0
 lazy-object-proxy==1.4.3
+MarkupSafe
 matplotlib==3.3.0
 mccabe==0.6.1
 numpy==1.19.0

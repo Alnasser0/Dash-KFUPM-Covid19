@@ -9,10 +9,9 @@ import { CovidDataService } from '../services/covid-data.service';
 })
 export class CurrentStatsComponent implements OnInit {
   total: Total = null;
-  newCases = 0;
-  activeChange = 0;
-  newRecoveries = 0;
-  newDeaths = 0;
+  changesOptions = {
+    duration: 1
+  };
 
   constructor(private covidDataService: CovidDataService) { }
 
@@ -20,13 +19,11 @@ export class CurrentStatsComponent implements OnInit {
     this.getTotal();
   }
 
-  // TODO: Update changes
   getTotal(): void {
-    this.covidDataService.getTotal().subscribe(total => {
-      this.total = total[0];
-      // const latest = this.total.daily[this.total.daily.length - 1];
-      // this.newCases = latest['New Cases'];
-
+    this.covidDataService.total.subscribe(total => {
+      if (total) {
+        this.total = total;
+      }
     });
   }
 
