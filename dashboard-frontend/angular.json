@@ -35,7 +35,8 @@
               "src/cork/assets/css/components/cards/card.css",
               "src/cork/assets/css/forms/theme-checkbox-radio.css",
               "src/cork/assets/css/tables/table-basic.css",
-              "src/cork/plugins/select2/select2.min.css"
+              "src/cork/plugins/select2/select2.min.css",
+              "src/cork/assets/css/components/tabs-accordian/custom-tabs.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",

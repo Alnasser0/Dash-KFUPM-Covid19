@@ -1,9 +1,18 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
-import { BaseChartDirective, Label } from 'ng2-charts';
+import { Label } from 'ng2-charts';
 import { Region } from '../models/region';
 import { Total } from '../models/total';
 import { CovidDataService } from '../services/covid-data.service';
+
+
+const TICKS_COLOR = '#FFFFFF';
+const CONFIRMED_COLOR = '#2196F3';
+const ACTIVE_COLOR = '#E7515A';
+const RECOVERED_COLOR = '#8DBF42';
+const DECEASED_COLOR = '#E2A03F';
+const TESTED_COLOR = '#3B3F5C';
+const CRITICAL_COLOR = '#5C1AC3';
 
 @Component({
   selector: 'app-charts',
@@ -13,20 +22,18 @@ import { CovidDataService } from '../services/covid-data.service';
 export class ChartsComponent implements OnInit, OnChanges {
 
   // @Input() selectedRegion: Region;
-  @ViewChild(BaseChartDirective) private _chart;
 
   regions: Region[];
   total: Total;
-
-  isRefreshing = false;
 
   regionNames: string[];
   defaultRegion = 'Saudi Arabia';
   selectedRegion = this.defaultRegion;
 
-  public lineChartType = 'line';
+  displayMode = 'cumulative';
 
-  displayMode = 'Daily';
+  public lineChartType = 'line';
+  public barChartType = 'bar';
 
   public confirmedLineChartData: ChartDataSets[];
   public activeLineChartData: ChartDataSets[];
@@ -35,9 +42,16 @@ export class ChartsComponent implements OnInit, OnChanges {
   public testedLineChartData: ChartDataSets[];
   public criticalLineChartData: ChartDataSets[];
 
-  public cumulativeLabels: Label[];
+  public confirmedBarChartData: ChartDataSets[];
+  public activeBarChartData: ChartDataSets[];
+  public recoveredBarChartData: ChartDataSets[];
+  public deceasedBarChartData: ChartDataSets[];
+  public testedBarChartData: ChartDataSets[];
 
-  public cumulativeOptions: ChartOptions = {
+  public cumulativeLabels: Label[];
+  public dailyLabels: Label[];
+
+  public chartOptions: ChartOptions = {
     responsive: true,
     elements: {
       point: {
@@ -48,7 +62,21 @@ export class ChartsComponent implements OnInit, OnChanges {
       display: false
     },
     tooltips: {
-      intersect: false
+      intersect: false,
+      backgroundColor: '#000',
+      titleAlign: 'center',
+      titleMarginBottom: 10,
+      titleFontSize: 16,
+      displayColors: false,
+      xPadding: 10,
+      yPadding: 10,
+      bodySpacing: 10,
+      bodyFontSize: 15,
+      callbacks: {
+        label: (tooltipItem, data) => {
+          return (+tooltipItem.value).toLocaleString();
+        }
+      }
     },
     hover: {
       intersect: false,
@@ -63,26 +91,26 @@ export class ChartsComponent implements OnInit, OnChanges {
         },
         ticks: {
           fontSize: 13,
-          fontColor: 'rgba(255, 255, 255, 0.8)',
+          fontColor: TICKS_COLOR + 'CC',
           maxTicksLimit: 10
         },
         gridLines: {
           drawOnChartArea: false,
           lineWidth: 1,
-          color: 'rgba(255, 255, 255, 0.8)'
+          color: TICKS_COLOR + 'CC'
         }
       }],
       yAxes: [{
         ticks: {
           fontSize: 13,
-          fontColor: 'rgba(255, 255, 255, 0.8)',
+          fontColor: TICKS_COLOR + 'CC',
           callback: (value) => value.toLocaleString(),
           maxTicksLimit: 10
         },
         gridLines: {
           drawOnChartArea: false,
           lineWidth: 0.9,
-          color: 'rgba(255, 255, 255, 0.8)'
+          color: TICKS_COLOR + 'CC'
         }
       }]
     }
@@ -101,23 +129,21 @@ export class ChartsComponent implements OnInit, OnChanges {
 
   changeDisplayMode(mode: string): void {
     this.displayMode = mode;
-    this.isRefreshing = true;
 
     switch (mode) {
-      case 'daily': break;
+      case 'daily':
+        this.updateCharts();
+        this.chartOptions.scales.yAxes[0].type = 'linear';
+        break;
 
       case 'cumulative':
-        this.cumulativeOptions.scales.yAxes[0].type = 'linear';
+        this.chartOptions.scales.yAxes[0].type = 'linear';
         break;
 
       case 'log':
-        this.cumulativeOptions.scales.yAxes[0].type = 'logarithmic';
+        this.chartOptions.scales.yAxes[0].type = 'logarithmic';
         break;
     }
-
-    setTimeout(() => {
-      this.isRefreshing = false;
-    }, 0);
   }
 
   getRegions(): void {
@@ -137,118 +163,85 @@ export class ChartsComponent implements OnInit, OnChanges {
 
   updateCharts(): void {
     let newRegion;
+
     if (this.selectedRegion === 'Saudi Arabia') {
       newRegion = this.total;
 
-      const cumulativeTested = newRegion.cumulative.map(c => c['Tested']);
-      this.configTestedLineChart(cumulativeTested);
+      if (this.displayMode === 'daily') {
+        const dailyTested = newRegion.daily.map(c => c['Tested']);
+        this.testedBarChartData = this.configBarChart(dailyTested, TESTED_COLOR);
 
-      const cumulativeCritical = newRegion.cumulative.map(c => c['Critical']);
-      this.configCriticalLineChart(cumulativeCritical);
+      } else {
+        const cumulativeTested = newRegion.cumulative.map(c => c['Tested']);
+        this.testedLineChartData = this.configLineChart(cumulativeTested, TESTED_COLOR);
+
+        const cumulativeCritical = newRegion.cumulative.map(c => c['Critical']);
+        this.criticalLineChartData = this.configLineChart(cumulativeCritical, CRITICAL_COLOR);
+      }
     } else {
       newRegion = this.regions.find(region => region.name === this.selectedRegion);
     }
 
-    const cumulativeConfirmed = newRegion.cumulative.map(c => c['Confirmed']);
-    this.configConfirmedLineChart(cumulativeConfirmed);
+    if (this.displayMode === 'daily') {
+      const dailyConfirmed = newRegion.daily.map(c => c['New Cases']);
+      this.confirmedBarChartData = this.configBarChart(dailyConfirmed, CONFIRMED_COLOR);
 
-    const cumulativeActive = newRegion.cumulative.map(c => c['Active']);
-    this.configActiveLineChart(cumulativeActive);
+      const dailyActive = newRegion.daily.map(c => c['Active']);
+      this.activeBarChartData = this.configBarChart(dailyActive, ACTIVE_COLOR);
 
-    const cumulativeRecovered = newRegion.cumulative.map(c => c['Recoveries']);
-    this.configRecoveredLineChart(cumulativeRecovered)
+      const dailyRecovered = newRegion.daily.map(c => c['Recoveries']);
+      this.recoveredBarChartData = this.configBarChart(dailyRecovered, RECOVERED_COLOR);
 
-    const cumulativeDeceased = newRegion.cumulative.map(c => c['Mortalities']);
-    this.configDeceasedLineChart(cumulativeDeceased);
+      const dailyDeceased = newRegion.daily.map(c => c['Mortalities']);
+      this.deceasedBarChartData = this.configBarChart(dailyDeceased, DECEASED_COLOR);
 
-    this.cumulativeLabels = newRegion.cumulative.map(d => d['Date']);
+      this.dailyLabels = newRegion.daily.map(d => d['Date']);
+
+    } else {
+      const cumulativeConfirmed = newRegion.cumulative.map(c => c['Confirmed']);
+      this.confirmedLineChartData = this.configLineChart(cumulativeConfirmed, CONFIRMED_COLOR);
+
+      const cumulativeActive = newRegion.cumulative.map(c => c['Active']);
+      this.activeLineChartData = this.configLineChart(cumulativeActive, ACTIVE_COLOR);
+
+      const cumulativeRecovered = newRegion.cumulative.map(c => c['Recoveries']);
+      this.recoveredLineChartData = this.configLineChart(cumulativeRecovered, RECOVERED_COLOR);
+
+      const cumulativeDeceased = newRegion.cumulative.map(c => c['Mortalities']);
+      this.deceasedLineChartData = this.configLineChart(cumulativeDeceased, DECEASED_COLOR);
+
+      this.cumulativeLabels = newRegion.cumulative.map(d => d['Date']);
+    }
 
   }
 
-  configConfirmedLineChart(data): void {
-    const confirmedLineChartOptions = {
+  // Configures chart options for Line chart
+  configLineChart(data, color): Array<any> {
+    const options = {
       data,
       pointBorderWidth: 0.5,
-      pointBorderColor: 'rgba(33,150,243, 0.9)',
-      pointHoverBackgroundColor: 'rgba(33,150,243, 1)',
-      pointHoverBorderColor: 'rgba(33,150,243, 1)',
-      pointBackgroundColor: 'rgba(33,150,243, 1)',
-      backgroundColor: 'rgba(33,150,243, 0.3)',
-      borderColor: 'rgba(33,150,243, 1)'
+      pointBorderColor: color + 'E6',
+      pointHoverBackgroundColor: color + 'FF',
+      pointHoverBorderColor: color + 'FF',
+      pointBackgroundColor: color + 'FF',
+      backgroundColor: color + '4D',
+      borderColor: color + 'FF'
     };
-    this.confirmedLineChartData = [confirmedLineChartOptions];
+
+    return [options];
   }
 
-  configActiveLineChart(data): void {
-    const activeLineChartOptions = {
+  configBarChart(data, color): Array<any> {
+    const options = {
       data,
-      pointBorderWidth: 0.5,
-      pointBorderColor: 'rgba(231,81,90, 0.9)',
-      pointHoverBackgroundColor: 'rgba(231,81,90, 1)',
-      pointHoverBorderColor: 'rgba(231,81,90, 1)',
-      pointBackgroundColor: 'rgba(231,81,90, 1)',
-      backgroundColor: 'rgba(231,81,90, 0.3)',
-      borderColor: 'rgba(231,81,90, 1)'
+      borderWidth: 1,
+      hoverBorderWidth: 5,
+      hoverBackgroundColor: color + 'FF',
+      hoverBorderColor: color + 'FF',
+      backgroundColor: color + '33',
+      borderColor: color + 'FF'
     };
-    this.activeLineChartData = [activeLineChartOptions];
+
+    return [options];
   }
-
-  configRecoveredLineChart(data): void {
-    const recoverdLineChartOptions = {
-      data,
-      pointBorderWidth: 0.5,
-      pointBorderColor: 'rgba(141,191,66, 0.9)',
-      pointHoverBackgroundColor: 'rgba(141,191,66, 1)',
-      pointHoverBorderColor: 'rgba(141,191,66, 1)',
-      pointBackgroundColor: 'rgba(141,191,66, 1)',
-      backgroundColor: 'rgba(141,191,66, 0.3)',
-      borderColor: 'rgba(141,191,66, 1)'
-    };
-    this.recoveredLineChartData = [recoverdLineChartOptions];
-  }
-
-  configDeceasedLineChart(data): void {
-    const deceasedLineChartOptions = {
-      data,
-      pointBorderWidth: 0.5,
-      pointBorderColor: 'rgba(226,160,63, 0.9)',
-      pointHoverBackgroundColor: 'rgba(226,160,63, 1)',
-      pointHoverBorderColor: 'rgba(226,160,63, 1)',
-      pointBackgroundColor: 'rgba(226,160,63, 1)',
-      backgroundColor: 'rgba(226,160,63, 0.3)',
-      borderColor: 'rgba(226,160,63, 1)'
-    };
-    this.deceasedLineChartData = [deceasedLineChartOptions];
-  }
-
-  configTestedLineChart(data): void {
-    const testedLineChartOptions = {
-      data,
-      pointBorderWidth: 0.5,
-      pointBorderColor: 'rgba(59,63,92, 0.9)',
-      pointHoverBackgroundColor: 'rgba(59,63,92, 1)',
-      pointHoverBorderColor: 'rgba(59,63,92, 1)',
-      pointBackgroundColor: 'rgba(59,63,92, 1)',
-      backgroundColor: 'rgba(59,63,92, 0.3)',
-      borderColor: 'rgba(59,63,92, 1)'
-    };
-    this.testedLineChartData = [testedLineChartOptions];
-  }
-
-  configCriticalLineChart(data): void {
-    const criticalLineChartOptions = {
-      data,
-      pointBorderWidth: 0.5,
-      pointBorderColor: 'rgb(92,26,195, 0.9)',
-      pointHoverBackgroundColor: 'rgba(92,26,195, 1)',
-      pointHoverBorderColor: 'rgba(92,26,195, 1)',
-      pointBackgroundColor: 'rgba(92,26,195, 1)',
-      backgroundColor: 'rgba(92,26,195, 0.3)',
-      borderColor: 'rgba(92,26,195, 1)'
-    };
-    this.criticalLineChartData = [criticalLineChartOptions];
-  }
-
-
-
 }
