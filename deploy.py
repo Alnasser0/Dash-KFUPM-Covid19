@@ -63,7 +63,7 @@ subprocess.call(
 print("Copied template files")
 
 # Create requirements.txt
-subprocess.call("pip freeze > requirements.txt", shell=True)
+subprocess.call("pip list --format=freeze > requirements.txt", shell=True)
 print("Created requirements.txt")
 
 print(f"Build complete.")
