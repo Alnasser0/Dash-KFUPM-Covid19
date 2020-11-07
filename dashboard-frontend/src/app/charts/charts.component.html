@@ -11,16 +11,18 @@
         </ng-select2>
       </div>
 
-      <ul class="nav nav-pills my-auto justify-content-end" id="justify-center-pills-tab" role="tablist">
+      <ul class="nav nav-pills my-auto justify-content-end" role="tablist">
         <li class="nav-item display-mode">
-          <a class="nav-link" data-toggle="pill" role="tab" (click)="changeDisplayMode('daily')">Daily</a>
+          <a class="nav-link" [class.active]="displayMode === 'daily'" data-toggle="pill" role="tab"
+            (click)="changeDisplayMode('daily')">Daily</a>
         </li>
         <li class="nav-item display-mode">
-          <a class="nav-link active" data-toggle="pill" role="tab"
+          <a class="nav-link" [class.active]="displayMode === 'cumulative'" data-toggle="pill" role="tab"
             (click)="changeDisplayMode('cumulative')">Cumulative</a>
         </li>
         <li class="nav-item display-mode">
-          <a class="nav-link" data-toggle="pill" role="tab" (click)="changeDisplayMode('log')">Logarithmic</a>
+          <a class="nav-link" [class.active]="displayMode === 'log'" data-toggle="pill" role="tab"
+            (click)="changeDisplayMode('log')">Logarithmic</a>
         </li>
       </ul>
     </section>
@@ -32,9 +34,22 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title text-center mb-1">Confirmed</h5>
-          <canvas *ngIf="!isRefreshing" baseChart [datasets]="confirmedLineChartData" [labels]="cumulativeLabels"
-            [chartType]="lineChartType" [options]="cumulativeOptions">
+
+          <!-- DAILY CHART -->
+          <canvas *ngIf="displayMode === 'daily'" baseChart [datasets]="confirmedBarChartData" [labels]="dailyLabels"
+            [chartType]="barChartType" [options]="chartOptions">
           </canvas>
+
+          <!-- CUMULATIVE CHART -->
+          <canvas *ngIf="displayMode === 'cumulative'" baseChart [datasets]="confirmedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
+          <!-- LOG CHART -->
+          <canvas *ngIf="displayMode === 'log'" baseChart [datasets]="confirmedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
         </div>
       </div>
     </article>
@@ -43,9 +58,22 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title text-center mb-1">Active</h5>
-          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="activeLineChartData"
-            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+
+          <!-- DAILY CHART -->
+          <canvas *ngIf="displayMode === 'daily'" baseChart [datasets]="activeBarChartData" [labels]="dailyLabels"
+            [chartType]="barChartType" [options]="chartOptions">
           </canvas>
+
+          <!-- CUMULATIVE CHART -->
+          <canvas *ngIf="displayMode === 'cumulative'" baseChart class="p-2" [datasets]="activeLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
+          <!-- LOG CHART -->
+          <canvas *ngIf="displayMode === 'log'" baseChart class="p-2" [datasets]="activeLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
         </div>
       </div>
     </article>
@@ -54,8 +82,18 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title text-center mb-1">Recovered</h5>
-          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="recoveredLineChartData"
-            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+
+          <canvas *ngIf="displayMode === 'daily'" baseChart [datasets]="recoveredBarChartData" [labels]="dailyLabels"
+            [chartType]="barChartType" [options]="chartOptions">
+          </canvas>
+
+          <canvas *ngIf="displayMode === 'cumulative'" baseChart class="p-2" [datasets]="recoveredLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
+
+          <canvas *ngIf="displayMode === 'log'" baseChart class="p-2" [datasets]="recoveredLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
           </canvas>
         </div>
       </div>
@@ -65,8 +103,17 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title text-center mb-1">Deceased</h5>
-          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="deceasedLineChartData"
-            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+
+          <canvas *ngIf="displayMode === 'daily'" baseChart [datasets]="deceasedBarChartData" [labels]="dailyLabels"
+            [chartType]="barChartType" [options]="chartOptions">
+          </canvas>
+
+          <canvas *ngIf="displayMode === 'cumulative'" baseChart class="p-2" [datasets]="deceasedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
+          <canvas *ngIf="displayMode === 'log'" baseChart class="p-2" [datasets]="deceasedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
           </canvas>
         </div>
       </div>
@@ -76,19 +123,34 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title text-center mb-1">Tested</h5>
-          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="testedLineChartData"
-            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+          <canvas *ngIf="displayMode === 'daily'" baseChart [datasets]="testedBarChartData" [labels]="dailyLabels"
+            [chartType]="barChartType" [options]="chartOptions">
           </canvas>
+
+          <canvas *ngIf="displayMode === 'cumulative'" baseChart class="p-2" [datasets]="testedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
+
+          <canvas *ngIf="displayMode === 'log'" baseChart class="p-2" [datasets]="testedLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
         </div>
       </div>
     </article>
 
-    <article class="col-sm-12 col-md-12 col-lg-6" *ngIf="selectedRegion === 'Saudi Arabia'">
+    <article class="col-sm-12 col-md-12 col-lg-6"
+      *ngIf="selectedRegion === 'Saudi Arabia' && (displayMode !== 'daily')">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title text-center mb-1">Critical</h5>
-          <canvas *ngIf="!isRefreshing" baseChart class="p-2" [datasets]="criticalLineChartData"
-            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="cumulativeOptions">
+          <canvas *ngIf="displayMode === 'cumulative'" baseChart class="p-2" [datasets]="criticalLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
+          </canvas>
+
+          <canvas *ngIf="displayMode === 'log'" baseChart class="p-2" [datasets]="criticalLineChartData"
+            [labels]="cumulativeLabels" [chartType]="lineChartType" [options]="chartOptions">
           </canvas>
         </div>
       </div>
