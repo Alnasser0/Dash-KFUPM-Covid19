@@ -48,7 +48,6 @@ export class ChartsComponent implements OnInit, OnChanges {
   public deceasedBarChartData: ChartDataSets[];
   public testedBarChartData: ChartDataSets[];
 
-
   public cumulativeLabels: Label[];
   public dailyLabels: Label[];
 
@@ -187,7 +186,7 @@ export class ChartsComponent implements OnInit, OnChanges {
       const dailyConfirmed = newRegion.daily.map(c => c['New Cases']);
       this.confirmedBarChartData = this.configBarChart(dailyConfirmed, CONFIRMED_COLOR);
 
-      const dailyActive = newRegion.daily.map(c => c['New Cases']);
+      const dailyActive = newRegion.daily.map(c => c['Active']);
       this.activeBarChartData = this.configBarChart(dailyActive, ACTIVE_COLOR);
 
       const dailyRecovered = newRegion.daily.map(c => c['Recoveries']);

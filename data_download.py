@@ -72,6 +72,8 @@ try:
     ).fillna(0).astype('int64')
     df_total_daily.columns = df_total_daily.columns.droplevel(0)
     df_total_daily = df_total_daily.reset_index().rename_axis(None, axis=1)
+    df_total_daily['Active'] = df_total_daily['New Cases'] - \
+        df_total_daily['Recoveries'] - df_total_daily['Mortalities']
 
     # Total cumulative
     df_total_cumulative = df_total[df_total['D/C'] == 'Cumulative'].pivot(
@@ -116,7 +118,11 @@ try:
     all_regions = []
     for region in region_names:
         r = Region(name=region)
-        r.daily = df_regions_daily_pivoted.loc[region].to_dict('records')
+
+        df_regions_daily_pivoted.loc[region, 'Active'] = df_regions_daily_pivoted.loc[region]['New Cases'] - \
+            df_regions_daily_pivoted.loc[region]['Recoveries'] - df_regions_daily_pivoted.loc[region]['Mortalities']
+
+        r.daily = df_regions_daily_pivoted.loc[region].astype({'Active': int}).to_dict('records')
 
         # Fill date gaps
         new_date_range = pd.date_range(
