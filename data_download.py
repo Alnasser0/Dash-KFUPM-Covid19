@@ -22,13 +22,6 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 is_data_parsed = False
 
 try:
-    client = MongoClient(
-        f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@covid19-kfupm.8orak.azure.mongodb.net/{DB_NAME}?retryWrites=true&w=majority"
-    )
-    db = client[DB_NAME]
-    regions_collection = db['regions']
-    cities_collection = db['cities']
-
     start = time.time()
     URL = "https://datasource.kapsarc.org/explore/dataset/saudi-arabia-coronavirus-disease-covid-19-situation/download/?format=csv&timezone=Asia/Baghdad&lang=en&use_labels_for_header=true&csv_separator=%3B"
     response = requests.get(URL)
@@ -187,6 +180,13 @@ except Exception as e:
 
 
 if is_data_parsed:
+    client = MongoClient(
+        f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@covid19-kfupm.8orak.azure.mongodb.net/{DB_NAME}?retryWrites=true&w=majority"
+    )
+    db = client[DB_NAME]
+    regions_collection = db['regions']
+    cities_collection = db['cities']
+
     # Insert Data
     regions_collection.delete_many({})
     cities_collection.delete_many({})
