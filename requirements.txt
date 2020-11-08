@@ -16,7 +16,7 @@ ipython-genutils==0.2.0
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
-mkl-fft
+mkl-fft==1.2.0
 mkl-random==1.1.1
 mkl-service==2.3.0
 numpy==1.19.2
