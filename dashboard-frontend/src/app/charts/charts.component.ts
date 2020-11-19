@@ -148,7 +148,7 @@ export class ChartsComponent implements OnInit, OnChanges {
 
   getRegions(): void {
     this.covidDataService.regions.subscribe(regions => {
-      if (regions.length > 0) {
+      if (regions.length) {
         this.regions = regions;
         this.regionNames = this.regions.map(region => region.name);
         this.regionNames.unshift('Saudi Arabia');

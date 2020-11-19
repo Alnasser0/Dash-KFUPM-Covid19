@@ -13,13 +13,15 @@ import { ChartsComponent } from './charts/charts.component';
 import { CountUpModule } from 'ngx-countup';
 import { NgSelect2Module } from 'ng-select2';
 import { ChartsModule } from 'ng2-charts';
+import { MapComponent } from './map/map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CurrentStatsComponent,
     RegionsTableComponent,
-    ChartsComponent
+    ChartsComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,

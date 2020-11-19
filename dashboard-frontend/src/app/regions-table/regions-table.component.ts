@@ -26,9 +26,11 @@ export class RegionsTableComponent implements OnInit {
 
   getRegions(): void {
     this.covidDataService.regions.subscribe((regions: Region[]) => {
-      this.regions = regions;
-      this.regions.sort((a, b) => +b.confirmed - +a.confirmed);
-      this.isRegionsLoaded = true;
+      if (regions.length) {
+        this.regions = regions;
+        this.regions.sort((a, b) => +b.confirmed - +a.confirmed);
+        this.isRegionsLoaded = true;
+      }
     });
   }
 }
