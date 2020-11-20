@@ -1,11 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { select, json, geoPath, geoMercator } from 'd3';
+import {
+  select,
+  json,
+  geoPath,
+  geoMercator,
+  geoCentroid,
+  zoom,
+  max,
+  min,
+  scaleQuantize,
+  scaleThreshold,
+  scaleLinear,
+  scaleQuantile,
+  schemeBlues,
+  interpolateBlues,
+  interpolateReds,
+  scaleSequentialLog,
+  scaleSequential,
+} from 'd3';
 import { feature } from 'topojson-client';
 import { CovidDataService } from '../services/covid-data.service';
 import { Region } from '../models/region';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+
+
+// const COLORS = ['#6EE3FF', '#3BB0FF', '#2196F3'];
+
+const COLORS = ['#FFEAF3', '#FFD0D9', '#FFB7C0', '#FF848D', '#FF9EA7', '#FF6B74', '#E7515A'];
 
 @Component({
   selector: 'app-map',
@@ -13,14 +35,9 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
-  private svg;
-  private width = 900;
-  private height = 600;
+
   private saudiTopoJson;
   regions: Region[];
-
-  // private projection = geoMercator().scale(1).translate([this.width / 2, this.height / 2]);
-  // private pathGenerator = geoPath().projection(this.projection);
 
   constructor(
     private http: HttpClient,
@@ -35,7 +52,7 @@ export class MapComponent implements OnInit {
         json('assets/saudi-arabia-topo.json').then((data: any) => {
           this.saudiTopoJson = data;
           this.appendCasesData();
-          this.createMap();
+          this.renderMap();
         });
       }
     });
@@ -54,19 +71,36 @@ export class MapComponent implements OnInit {
     });
   }
 
-  createMap(): void {
-    // const regions = feature(data, data.objects.gadm36_SAU_1);
+  renderMap(): void {
+    const geojson = feature(this.saudiTopoJson, this.saudiTopoJson.objects.gadm36_SAU_1);
 
-    // const projection = geoMercator();
-    // const pathGenerator = geoPath().projection(projection);
+    const maxVal = +max(geojson.features, (d: any) => d.properties.confirmed);
+    const minVal = +min(geojson.features, (d: any) => d.properties.confirmed);
 
-    // const g = this.svg.append('g')
-    //   .attr('translate', `transform(${this.width / 2}, ${this.height / 2})`);
+    const color = scaleSequentialLog()
+      .domain([minVal, maxVal])
+      .interpolator(interpolateBlues);
 
-    // g.selectAll('path')
-    //   .data(regions.features)
-    //   .enter().append('path')
-    //   .attr('d', pathGenerator);
+    const svg = select('svg').attr('viewBox', `0 0 600 500`);
+    const width = +svg.attr('width');
+    const height = +svg.attr('height');
 
+    const center = geoCentroid(geojson);
+
+    const projection = geoMercator().scale(1500).center(center).translate([width / 2, height / 2]);
+    const pathGenerator = geoPath().projection(projection);
+
+    const map = svg.append('g');
+
+    map.selectAll('path')
+      .data(geojson.features)
+      .enter().append('path')
+      .attr('class', 'region')
+      .attr('fill', (d: any) => color(d.properties.confirmed))
+      .attr('d', pathGenerator);
+
+    svg.call(zoom().on('zoom', event => {
+      map.attr('transform', event.transform);
+    }));
   }
 }

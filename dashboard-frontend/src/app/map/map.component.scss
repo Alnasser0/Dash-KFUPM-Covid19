@@ -1,10 +1,14 @@
-::ng-deep svg path {
-  fill: white;
-  stroke: black;
-  stroke-opacity: 0.1;
+::ng-deep svg {
+  path {
+    stroke: black;
+    fill-opacity: 0.9;
+    stroke-width: 0.3px;
+    stroke-opacity: 0.5;
+  }
 }
 
-svg {
-  width: 100%;
-  height: 100%;
+::ng-deep path.region:hover {
+  stroke-width: 1.5px;
+  fill-opacity: 1;
+  stroke-opacity: 1;
 }
