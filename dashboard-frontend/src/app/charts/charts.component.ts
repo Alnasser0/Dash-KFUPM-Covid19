@@ -105,7 +105,7 @@ export class ChartsComponent implements OnInit, OnChanges {
           fontSize: 13,
           fontColor: TICKS_COLOR + 'CC',
           callback: (value) => value.toLocaleString(),
-          maxTicksLimit: 10
+          maxTicksLimit: 6
         },
         gridLines: {
           drawOnChartArea: false,

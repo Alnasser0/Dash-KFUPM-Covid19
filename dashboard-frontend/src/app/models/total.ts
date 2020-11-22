@@ -5,6 +5,7 @@ export class Total {
   mortalities: number;
   critical: number;
   tested: number;
+  population: number;
 
   daily: [];
   cumulative: [];
@@ -19,6 +20,7 @@ export class Total {
     mortalities: number,
     critical: number,
     tested: number,
+    population: number,
     daily: [],
     cumulative: []) {
 
@@ -28,6 +30,7 @@ export class Total {
     this.mortalities = mortalities;
     this.tested = tested;
     this.critical = critical;
+    this.population = population;
 
     this.daily = daily;
     this.cumulative = cumulative;
