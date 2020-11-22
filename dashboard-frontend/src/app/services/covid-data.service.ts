@@ -36,6 +36,7 @@ export class CovidDataService {
         total[0].mortalities,
         total[0].critical,
         total[0].tested,
+        total[0].population,
         total[0].daily,
         total[0].cumulative
       ))

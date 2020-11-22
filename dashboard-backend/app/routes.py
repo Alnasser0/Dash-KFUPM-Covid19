@@ -20,6 +20,7 @@ client = MongoClient(
 db = client[DB_NAME]
 regions_collection = db['regions']
 cities_collection = db['cities']
+misc_collection = db['misc_info']
 
 
 @app.route("/<path:path>", methods=["GET"])

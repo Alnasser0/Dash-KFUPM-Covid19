@@ -1,17 +1,17 @@
 import os
 import time
-import json
 import requests
 
 import numpy as np
 import pandas as pd
 
+from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+from pymongo import MongoClient
+
 from models.city import City
 from models.region import Region
 from models.total import Total
-
-from dotenv import load_dotenv
-from pymongo import MongoClient
 
 load_dotenv()
 
@@ -85,6 +85,14 @@ try:
     total.critical = total_cumulative_list[-1]['Critical']
     total.recoveries = total_cumulative_list[-1]['Recoveries']
     total.mortalities = total_cumulative_list[-1]['Mortalities']
+
+    # Total population
+    worldometers_url = 'https://www.worldometers.info/world-population/saudi-arabia-population/'
+    response = requests.get(worldometers_url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    population = soup.select('div.col-md-8.country-pop-description ul li strong')[1].get_text()
+    population = population.replace(',', '')
+    total.population = int(population)
 
     # Extract daily data
     df_daily = all_data[(all_data['D/C'] == 'Daily') & (all_data['Region'] != 'Total')]

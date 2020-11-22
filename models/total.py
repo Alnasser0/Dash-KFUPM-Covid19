@@ -10,6 +10,7 @@ class Total:
         self.mortalities = None
         self.critical = None
         self.tested = None
+        self.population = None
 
         # list of historical statistics
         self.daily = None
