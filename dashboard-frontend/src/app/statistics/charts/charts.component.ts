@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
+import { combineLatest } from 'rxjs';
 import { Label } from 'ng2-charts';
 import { Region } from 'src/app/models/region';
 import { Total } from 'src/app/models/total';
@@ -19,7 +20,7 @@ const CRITICAL_COLOR = '#5C1AC3';
   templateUrl: './charts.component.html',
   styleUrls: ['./charts.component.scss']
 })
-export class ChartsComponent implements OnInit, OnChanges {
+export class ChartsComponent implements OnInit {
 
   // @Input() selectedRegion: Region;
 
@@ -118,13 +119,22 @@ export class ChartsComponent implements OnInit, OnChanges {
 
   constructor(private covidDataService: CovidDataService) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
-
-  }
-
   ngOnInit(): void {
-    this.getRegions();
-    this.getTotal();
+    // Combine Regions and Total data
+    combineLatest([this.covidDataService.total, this.covidDataService.regions])
+      .subscribe(results => {
+        if (results[0] && results[1].length) {
+          // Regions
+          this.regions = results[1];
+          this.regionNames = this.regions.map(region => region.name);
+          this.regionNames.unshift('Saudi Arabia');
+
+          // Total
+          this.total = results[0];
+
+          this.updateCharts();
+        }
+      });
   }
 
   changeDisplayMode(mode: string): void {
@@ -144,21 +154,6 @@ export class ChartsComponent implements OnInit, OnChanges {
         this.chartOptions.scales.yAxes[0].type = 'logarithmic';
         break;
     }
-  }
-
-  getRegions(): void {
-    this.covidDataService.regions.subscribe(regions => {
-      if (regions.length) {
-        this.regions = regions;
-        this.regionNames = this.regions.map(region => region.name);
-        this.regionNames.unshift('Saudi Arabia');
-        this.updateCharts();
-      }
-    });
-  }
-
-  getTotal(): void {
-    this.covidDataService.total.subscribe(total => this.total = total);
   }
 
   updateCharts(): void {
