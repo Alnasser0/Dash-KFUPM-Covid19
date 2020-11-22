@@ -2,18 +2,25 @@ import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { CurrentStatsComponent } from './current-stats/current-stats.component';
-import { RegionsTableComponent } from './regions-table/regions-table.component';
-import { ChartsComponent } from './charts/charts.component';
 
 import { CountUpModule } from 'ngx-countup';
 import { NgSelect2Module } from 'ng-select2';
 import { ChartsModule } from 'ng2-charts';
-import { MapComponent } from './map/map.component';
+import { SimulationComponent } from './simulation/simulation.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { ChartsComponent } from './statistics/charts/charts.component';
+import { CurrentStatsComponent } from './statistics/current-stats/current-stats.component';
+import { MapComponent } from './statistics/map/map.component';
+import { RegionsTableComponent } from './statistics/regions-table/regions-table.component';
+
+const routes = [
+  { path: '', component: StatisticsComponent },
+  { path: 'simulation', component: SimulationComponent }
+];
 
 @NgModule({
   declarations: [
@@ -21,11 +28,14 @@ import { MapComponent } from './map/map.component';
     CurrentStatsComponent,
     RegionsTableComponent,
     ChartsComponent,
-    MapComponent
+    MapComponent,
+    SimulationComponent,
+    StatisticsComponent
   ],
   imports: [
     BrowserModule,
     CommonModule,
+    RouterModule.forRoot(routes),
     HttpClientModule,
     FormsModule,
     CountUpModule,

@@ -16,9 +16,8 @@ import {
 } from 'd3';
 
 import { feature } from 'topojson-client';
-import { CovidDataService } from '../services/covid-data.service';
-import { Region } from '../models/region';
-
+import { Region } from 'src/app/models/region';
+import { CovidDataService } from 'src/app/services/covid-data.service';
 
 // const COLORS = ['#FFEAF3', '#FFD0D9', '#FFB7C0', '#FF848D', '#FF9EA7', '#FF6B74', '#E7515A'];
 

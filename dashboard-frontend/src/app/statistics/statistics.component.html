@@ -1,0 +1,18 @@
+<app-current-stats></app-current-stats>
+
+<div class="row">
+  <!-- REGIONS TABLE -->
+  <article class="col-sm-12 col-md-12 col-lg-6 mb-4">
+    <app-regions-table (selectCityEvent)="selectCity($event)" (selectRegionEvent)="selectRegion($event)"
+      (selectTotalEvent)="selectTotal($event)" (showTotalEvent)="showTotalFlag($event)">
+    </app-regions-table>
+  </article>
+  <!-- CHOROPLETH MAP -->
+  <article class="col-sm-12 col-md-12 col-lg-6 mb-4">
+    <app-map></app-map>
+  </article>
+</div>
+
+<section class="mt-1">
+  <app-charts class="col-lg-6"></app-charts>
+</section>

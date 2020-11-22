@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { City } from '../models/city';
-import { Region } from '../models/region';
-import { Total } from '../models/total';
-import { CovidDataService } from '../services/covid-data.service';
+import { City } from 'src/app/models/city';
+import { Region } from 'src/app/models/region';
+import { Total } from 'src/app/models/total';
+import { CovidDataService } from 'src/app/services/covid-data.service';
 
 @Component({
   selector: 'app-regions-table',

@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
-import { Region } from '../models/region';
-import { Total } from '../models/total';
-import { CovidDataService } from '../services/covid-data.service';
+import { Region } from 'src/app/models/region';
+import { Total } from 'src/app/models/total';
+import { CovidDataService } from 'src/app/services/covid-data.service';
 
 
 const TICKS_COLOR = '#FFFFFF';

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Total } from '../models/total';
-import { CovidDataService } from '../services/covid-data.service';
+import { Total } from 'src/app/models/total';
+import { CovidDataService } from 'src/app/services/covid-data.service';
 
 @Component({
   selector: 'app-current-stats',
