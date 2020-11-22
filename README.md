@@ -1,6 +1,6 @@
 # KFUPM Covid-19 Dashboard
 
-Devolopment progress of KFUPM COVID19 Dashbaord. It is built using Dash, which is a Python framework for building analytical web applications.
+KFUPM COVID19 Dashbaord
 
 ## Setup
 
