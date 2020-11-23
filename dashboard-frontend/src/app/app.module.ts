@@ -18,8 +18,9 @@ import { MapComponent } from './statistics/map/map.component';
 import { RegionsTableComponent } from './statistics/regions-table/regions-table.component';
 
 const routes = [
-  { path: '', component: StatisticsComponent },
-  { path: 'simulation', component: SimulationComponent }
+  { path: 'statistics', component: StatisticsComponent },
+  { path: 'simulation', component: SimulationComponent },
+  { path: '', redirectTo: '/statistics', pathMatch: 'full' },
 ];
 
 @NgModule({

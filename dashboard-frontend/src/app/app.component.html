@@ -1,16 +1,17 @@
-<header class="mx-auto">
+<header class="mx-auto my-5 d-flex justify-content-between align-items-center">
+  <!-- LOGO -->
   <article class="d-flex justify-content-center">
-    <img id="kfupm-logo" src="assets/kfupm-logo.png" alt="KFUPM Logo">
+    <img class="img-fluid" id="kfupm-logo" src="assets/kfupm-logo.png" alt="KFUPM Logo">
     <p class="my-auto text-uppercase">COVID-19<br>Saudi Arabia</p>
   </article>
-  <ul class="nav nav-tabs  mb-3 mt-3 justify-content-center" id="justifyCenterTab" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link active" id="justify-center-home-tab" data-toggle="tab" routerLink="/" role="tab"
-        aria-controls="justify-center-home" aria-selected="true">STATISTICS</a>
+
+  <!-- LINKS -->
+  <ul class="nav justify-content-end">
+    <li class="nav-item my-auto">
+      <a class="nav-link" routerLink="/statistics" routerLinkActive="activebutton">STATISTICS</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" id="justify-center-profile-tab" data-toggle="tab" routerLink="/simulation" role="tab"
-        aria-controls="justify-center-profile" aria-selected="false">SIMULATION</a>
+    <li class="nav-item my-auto">
+      <a class="nav-link" routerLink="/simulation" routerLinkActive="activebutton">SIMULATION</a>
     </li>
   </ul>
 

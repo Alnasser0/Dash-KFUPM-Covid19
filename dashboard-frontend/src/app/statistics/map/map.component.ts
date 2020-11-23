@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 import {
   select,
@@ -12,14 +11,13 @@ import {
   min,
   interpolateBlues,
   interpolateReds,
-  scaleSequentialLog,
+  interpolateOrRd,
+  scaleSequential
 } from 'd3';
 
 import { feature } from 'topojson-client';
 import { Region } from 'src/app/models/region';
 import { CovidDataService } from 'src/app/services/covid-data.service';
-
-// const COLORS = ['#FFEAF3', '#FFD0D9', '#FFB7C0', '#FF848D', '#FF9EA7', '#FF6B74', '#E7515A'];
 
 @Component({
   selector: 'app-map',
@@ -85,13 +83,16 @@ export class MapComponent implements OnInit {
     const maxVal = +max(geojson.features, (d: any) => d.properties.confirmed);
     const minVal = +min(geojson.features, (d: any) => d.properties.confirmed);
 
-    const color = scaleSequentialLog()
+    const color = scaleSequential()
       .domain([minVal, maxVal])
       .interpolator(interpolateBlues);
 
     const svg = select('svg').attr('viewBox', `0 0 650 650`);
     const width = +svg.attr('width');
     const height = +svg.attr('height');
+
+    // svg.append('g')
+    //   .append(() => legend({ color, title: 'Confirmed cases' }));
 
     const center = geoCentroid(geojson);
 

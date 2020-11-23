@@ -1,11 +1,23 @@
 #kfupm-logo {
-  width: 80px;
-  float: left;
+  width: 100%;
+  height: auto;
+  max-width: 80px;
 }
 
 p {
   display: inline-block;
   margin-left: 10px;
-  font-size: 1.8em;
+  font-size: 1.6em;
   line-height: 1.2;
+}
+
+a.nav-link {
+  opacity: 0.4;
+  font-size: 1.1em;
+}
+
+a.activebutton {
+  border-bottom: 1px solid #fafafa;
+  opacity: 1;
+  transition: opacity 0.1s;
 }
