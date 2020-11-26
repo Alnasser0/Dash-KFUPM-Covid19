@@ -1,8 +1,14 @@
 from app import app
 
 import os
+import subprocess
+import xml.etree.ElementTree as ET
+
+import moviepy.video.io.ImageSequenceClip as ISC
 
 from flask import render_template, send_from_directory
+from flask import send_file, safe_join, abort
+from flask import request
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -52,6 +58,35 @@ def get_regions():
 @app.route('/all-cities')
 def get_cities():
     return dumps(cities_collection.find())
+
+
+@app.route('/simulation', methods=['POST'])
+def perform_simulation():
+    req = request.json
+    finalStep = req['finalStep']
+    cwd = os.getcwd()
+    headless_path = os.path.join(cwd, 'GAMA_1.8.1_Windows', 'headless')
+    samples = os.path.join(headless_path, 'samples')
+    # xml_path = os.path.join(samples, 'predatorPrey.xml')
+    xml_path = os.path.join(samples, 'roadTraffic.xml')
+    # tree = ET.parse(xml_path)
+    # root = tree.getroot()
+
+    # simulation_tag = root.find('Simulation')
+    # simulation_tag.set('finalStep', int(finalStep))
+    # simulation_tag.find('Outputs').find('Output').set('framerate', req['framerate'])
+
+    # tree.write(os.path.join(samples, 'predatorPrey.xml'))
+    # tree.write(os.path.join(samples, 'roadTraffic.xml'))
+
+    subprocess.call((f"cd {headless_path} && gama-headless.bat {xml_path} outputHeadless"), shell=True)
+
+    snapshots_path = os.path.join(headless_path, 'outputHeadless', 'snapshot')
+    imgs = [os.path.join(snapshots_path, img) for img in os.listdir(snapshots_path)]
+    clip = ISC.ImageSequenceClip(imgs, fps=24)
+    clip.write_videofile('test.mp4')
+
+    return send_from_directory(cwd, filename='test.mp4', as_attachment=True)
 
 
 @app.errorhandler(503)

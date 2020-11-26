@@ -1,1 +1,13 @@
-<p>simulation works!</p>
+<form (ngSubmit)="onSubmit()" #simulationForm="ngForm">
+  <div class="form-group">
+    <input type="text" name="framerate" id="framerate" class="form-control" [(ngModel)]="framerate">
+  </div>
+  <div class="form-group">
+    <input type="text" name="finalstep" id="finalstep" class="form-control" [(ngModel)]="finalStep">
+  </div>
+  <button type="submit" class="btn btn-primary">Simulate</button>
+</form>
+
+<video width="500" controls *ngIf="src" autoplay>
+  <source [src]="src" type="video/mp4">
+</video>

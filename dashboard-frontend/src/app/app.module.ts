@@ -19,7 +19,7 @@ import { RegionsTableComponent } from './statistics/regions-table/regions-table.
 
 const routes = [
   { path: 'statistics', component: StatisticsComponent },
-  { path: 'simulation', component: SimulationComponent },
+  { path: 'simulation', component: SimulationComponent, pathMatch: 'full' },
   { path: '', redirectTo: '/statistics', pathMatch: 'full' },
 ];
 

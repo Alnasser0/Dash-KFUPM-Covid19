@@ -65,4 +65,8 @@ export class CovidDataService {
     return this.http.get<City[]>(`${baseURL}/all-cities`);
   }
 
+  simulate(options: any): Observable<any> {
+    return this.http.post(`${baseURL}/simulation`, options, { responseType: 'blob' });
+  }
+
 }
