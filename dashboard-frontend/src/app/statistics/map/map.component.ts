@@ -66,8 +66,8 @@ export class MapComponent implements OnInit {
 
   // Append all case data per region to topojson properties
   appendCasesData(): void {
-    this.saudiTopoJson.objects.gadm36_SAU_1.geometries.map(r => {
-      const region = this.regions.find(el => el.name === r.properties.NAME_1);
+    this.saudiTopoJson.objects.regions.geometries.map(r => {
+      const region = this.regions.find(el => el.name === r.properties.name);
       r.properties.confirmed = region.confirmed;
       r.properties.active = region.active;
       r.properties.recoveries = region.recoveries;
@@ -78,7 +78,7 @@ export class MapComponent implements OnInit {
   }
 
   renderMap(): void {
-    const geojson = feature(this.saudiTopoJson, this.saudiTopoJson.objects.gadm36_SAU_1);
+    const geojson = feature(this.saudiTopoJson, this.saudiTopoJson.objects.regions);
 
     const maxVal = +max(geojson.features, (d: any) => d.properties.confirmed);
     const minVal = +min(geojson.features, (d: any) => d.properties.confirmed);
