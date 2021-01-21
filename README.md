@@ -1,5 +1,6 @@
 # Dash-KFUPM-Covid19 (Obsolete)
 [Project Page Web Site](https://dssl-kfupm.github.io/PSM/)
+
 Devolopment progress of KFUPM COVID19 Dashbaord. It is built using Dash, which is a Python framework for building analytical web applications.
 
 In Development (contribution is appreciated):
